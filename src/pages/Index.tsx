@@ -170,6 +170,21 @@ const Index = () => {
           <KnowledgeManager />
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-6 text-center">
+        <p className="text-xs text-muted-foreground font-body">
+          Created by{" "}
+          <a
+            href="https://curiouscode.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Curious Code
+          </a>
+        </p>
+      </footer>
     </div>
   );
 };
