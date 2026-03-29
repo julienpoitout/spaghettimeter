@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
 import KnowledgeManager from "@/components/KnowledgeManager";
+import RepoSelector from "@/components/RepoSelector";
 import { LogOut } from "lucide-react";
 
 const Index = () => {
@@ -123,6 +124,15 @@ const Index = () => {
               "🍴 Spaghettify"
             )}
           </Button>
+        </motion.div>
+
+        {/* Repo browser */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.4 }}
+        >
+          <RepoSelector onSelect={(url) => setRepoUrl(url)} />
         </motion.div>
 
         {/* Loading state */}
