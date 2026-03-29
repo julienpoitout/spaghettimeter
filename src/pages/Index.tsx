@@ -14,6 +14,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const { toast } = useToast();
+  const { user, isAdmin, signOut } = useAuth();
 
   const handleAnalyze = async () => {
     if (!repoUrl.trim()) {
