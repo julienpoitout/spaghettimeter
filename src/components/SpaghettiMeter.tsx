@@ -5,17 +5,17 @@ interface SpaghettiMeterProps {
 }
 
 const getColor = (score: number) => {
-  if (score <= 3) return "hsl(var(--spaghetti-green))";
+  if (score <= 3) return "hsl(var(--spaghetti-red))";
   if (score <= 6) return "hsl(var(--spaghetti-yellow))";
-  return "hsl(var(--spaghetti-red))";
+  return "hsl(var(--spaghetti-green))";
 };
 
 const getLabel = (score: number) => {
-  if (score <= 2) return "Clean Pasta 🍝";
-  if (score <= 4) return "Slightly Tangled 🍜";
+  if (score <= 2) return "Mamma Mia! 🤌💥";
+  if (score <= 4) return "Full Spaghetti 🍝💀";
   if (score <= 6) return "Getting Messy 😬";
-  if (score <= 8) return "Full Spaghetti 🍝💀";
-  return "Mamma Mia! 🤌💥";
+  if (score <= 8) return "Slightly Tangled 🍜";
+  return "Clean Pasta 🍝";
 };
 
 const SpaghettiMeter = ({ score }: SpaghettiMeterProps) => {
