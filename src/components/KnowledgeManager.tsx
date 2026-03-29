@@ -109,16 +109,12 @@ const KnowledgeManager = () => {
 
   // Non-admin users see read-only count
   if (!isAdmin) {
+    if (!user) return null;
     return (
       <div className="w-full max-w-2xl mx-auto">
         <div className="flex items-center gap-2 text-muted-foreground font-body text-sm">
           <BookOpen className="w-4 h-4" />
           Knowledge Base ({items.length} entries)
-          {!user && (
-            <Button variant="ghost" size="sm" onClick={() => navigate("/auth")} className="ml-2 gap-1">
-              <LogIn className="w-3 h-3" /> Admin Login
-            </Button>
-          )}
         </div>
       </div>
     );
