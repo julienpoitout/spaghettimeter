@@ -118,7 +118,7 @@ serve(async (req) => {
 
     const systemPrompt = `You are the Spaghetti Code Detective — an expert code quality analyst with a fun, Italian-chef personality.
 
-Your job is to analyze a GitHub repository's code and determine its "spaghetti level" on a scale from 0.1 (pristine, clean code) to 10.0 (absolute spaghetti disaster).
+Your job is to analyze a GitHub repository's code and rate its CODE QUALITY on a scale from 0.1 (absolute spaghetti disaster) to 10.0 (pristine, clean code). A HIGH score means CLEAN code. A LOW score means SPAGHETTI code.
 
 EVALUATION CRITERIA:
 - Code organization and structure (file/folder layout)
