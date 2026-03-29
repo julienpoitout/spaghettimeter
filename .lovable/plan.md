@@ -1,21 +1,27 @@
 
 
-## Investigation: Sign Out Button Not Working
+## Alternative: GitHub Public Repo Browser (No OAuth Required)
 
-**Root cause:** The `signOut` function in `useAuth.tsx` calls `supabase.auth.signOut()` but only clears `isAdmin`. It relies on `onAuthStateChange` to clear `user` and `session`, but the async `checkAdmin` call in that listener can cause the UI to stay stale.
+Since GitHub OAuth isn't available in Lovable Cloud, we can still improve the UX by letting users **browse and select public repos by GitHub username** — no login required.
 
-**Fix in `src/hooks/useAuth.tsx`:** Update the `signOut` function to immediately clear all local state:
+### How it works
 
-```ts
-const signOut = async () => {
-  await supabase.auth.signOut();
-  setSession(null);
-  setUser(null);
-  setIsAdmin(false);
-};
-```
+1. User enters their GitHub username in a new input field
+2. App calls the GitHub public API (`GET /users/{username}/repos`) to list their public repositories
+3. Repos are displayed in a selectable list (name, description, language, stars)
+4. User clicks a repo to auto-fill the URL and trigger analysis
 
-This ensures the UI updates instantly without depending on the auth state change listener's async behavior.
+### Technical details
 
-**Single file change**, ~3 lines modified.
+- **No auth needed** — GitHub's public API allows unauthenticated requests (60 requests/hour per IP)
+- **New component**: `RepoSelector.tsx` — username input + repo list UI
+- **Changes to `Index.tsx`**: Add the repo selector above or alongside the URL input; selecting a repo sets the `repoUrl` state
+- **GitHub API**: `https://api.github.com/users/{username}/repos?sort=updated&per_page=30`
+
+### Limitations
+
+- Only public repos are visible (private repos require OAuth)
+- Rate limited to 60 requests/hour without a token
+
+This gives users a convenient way to find and select their repos without needing GitHub OAuth.
 
