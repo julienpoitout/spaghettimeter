@@ -12,8 +12,19 @@ export default {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      display: ['Fredoka', 'sans-serif'],
+      body: ['Inter', 'sans-serif'],
+    },
     extend: {
       colors: {
+        spaghetti: {
+          red: "hsl(var(--spaghetti-red))",
+          yellow: "hsl(var(--spaghetti-yellow))",
+          green: "hsl(var(--spaghetti-green))",
+          cream: "hsl(var(--spaghetti-cream))",
+          brown: "hsl(var(--spaghetti-brown))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
