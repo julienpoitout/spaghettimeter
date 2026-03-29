@@ -59,6 +59,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {user && (
+        <div className="absolute top-4 right-4">
+          <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 text-muted-foreground">
+            <LogOut className="w-4 h-4" /> Sign Out
+          </Button>
+        </div>
+      )}
       <div className="container max-w-3xl mx-auto px-4 py-12 space-y-8">
         {/* Header */}
         <motion.div
