@@ -126,6 +126,15 @@ const Index = () => {
           </Button>
         </motion.div>
 
+        {/* Repo browser */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.4 }}
+        >
+          <RepoSelector onSelect={(url) => setRepoUrl(url)} />
+        </motion.div>
+
         {/* Loading state */}
         <AnimatePresence>
           {isLoading && (
