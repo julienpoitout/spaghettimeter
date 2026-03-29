@@ -4,14 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
 import KnowledgeManager from "@/components/KnowledgeManager";
+import { LogOut } from "lucide-react";
 
 const Index = () => {
   const [repoUrl, setRepoUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const { toast } = useToast();
+  const { user, isAdmin, signOut } = useAuth();
 
   const handleAnalyze = async () => {
     if (!repoUrl.trim()) {
@@ -56,6 +59,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {user && (
+        <div className="absolute top-4 right-4">
+          <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 text-muted-foreground">
+            <LogOut className="w-4 h-4" /> Sign Out
+          </Button>
+        </div>
+      )}
       <div className="container max-w-3xl mx-auto px-4 py-12 space-y-8">
         {/* Header */}
         <motion.div
