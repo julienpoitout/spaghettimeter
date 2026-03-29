@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
 import KnowledgeManager from "@/components/KnowledgeManager";
+import { LogOut } from "lucide-react";
 
 const Index = () => {
   const [repoUrl, setRepoUrl] = useState("");
