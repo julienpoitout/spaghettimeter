@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import SpaghettiMeter from "./SpaghettiMeter";
+import ShareResults from "./ShareResults";
 import { Card } from "@/components/ui/card";
 
 export interface AnalysisResult {
