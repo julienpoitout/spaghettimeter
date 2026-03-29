@@ -78,6 +78,9 @@ const AnalysisResults = ({ result, repoUrl }: AnalysisResultsProps) => {
           </ul>
         </Card>
       </motion.div>
+
+      {/* Share */}
+      <ShareResults score={result.score} repoUrl={repoUrl} />
     </motion.div>
   );
 };
