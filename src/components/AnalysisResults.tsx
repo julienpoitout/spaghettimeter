@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import SpaghettiMeter from "./SpaghettiMeter";
+import ShareResults from "./ShareResults";
 import { Card } from "@/components/ui/card";
 
 export interface AnalysisResult {
@@ -77,6 +78,9 @@ const AnalysisResults = ({ result, repoUrl }: AnalysisResultsProps) => {
           </ul>
         </Card>
       </motion.div>
+
+      {/* Share */}
+      <ShareResults score={result.score} repoUrl={repoUrl} />
     </motion.div>
   );
 };
