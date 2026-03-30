@@ -9,8 +9,10 @@ import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResul
 import KnowledgeManager from "@/components/KnowledgeManager";
 import RepoSelector from "@/components/RepoSelector";
 import { LogOut } from "lucide-react";
+import FeedbackForm from "@/components/FeedbackForm";
 
 const Index = () => {
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [repoUrl, setRepoUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
