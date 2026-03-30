@@ -9,8 +9,10 @@ import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResul
 import KnowledgeManager from "@/components/KnowledgeManager";
 import RepoSelector from "@/components/RepoSelector";
 import { LogOut } from "lucide-react";
+import FeedbackForm from "@/components/FeedbackForm";
 
 const Index = () => {
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [repoUrl, setRepoUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -60,13 +62,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {user && (
-        <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <Button variant="ghost" size="sm" onClick={() => setFeedbackOpen(true)} className="text-muted-foreground hover:text-primary">
+          Feedback?
+        </Button>
+        {user && (
           <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 text-muted-foreground">
             <LogOut className="w-4 h-4" /> Sign Out
           </Button>
-        </div>
-      )}
+        )}
+      </div>
+      <FeedbackForm open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
       <div className="container max-w-3xl mx-auto px-4 py-12 space-y-8">
         {/* Header */}
         <motion.div
