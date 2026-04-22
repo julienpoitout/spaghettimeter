@@ -76,7 +76,7 @@ serve(async (req) => {
   }
 
   try {
-    const { repoUrl } = await req.json();
+    const { repoUrl, githubToken } = await req.json();
     if (!repoUrl) {
       return new Response(
         JSON.stringify({ success: false, error: "repoUrl is required" }),
@@ -95,10 +95,16 @@ serve(async (req) => {
 
     const [, owner, repo] = match;
 
-    console.log(`Analyzing repo: ${owner}/${repo}`);
+    console.log(`Analyzing repo: ${owner}/${repo} (auth: ${githubToken ? "yes" : "no"})`);
+
+    // Basic token sanity check
+    const safeToken =
+      typeof githubToken === "string" && githubToken.length > 10 && githubToken.length < 500
+        ? githubToken
+        : undefined;
 
     // Fetch repo files
-    const codeContent = await fetchRepoFiles(owner, repo.replace(/\.git$/, ""));
+    const codeContent = await fetchRepoFiles(owner, repo.replace(/\.git$/, ""), safeToken);
 
     // Fetch knowledge base
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
