@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Star, GitFork, ChevronRight, Lock, Globe, RefreshCw } from "lucide-react";
+import { Search, Star, GitFork, ChevronRight, Lock, Globe } from "lucide-react";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
 
 interface Repo {
@@ -96,24 +96,29 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
       </p>
       <div className="flex gap-2">
         {!isConnected && (
-          <Input
-            placeholder="GitHub username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && fetchRepos()}
-            className="flex-1 h-10 text-sm font-body"
-          />
+          <>
+            <Input
+              placeholder="GitHub username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && fetchRepos()}
+              className="flex-1 h-10 text-sm font-body"
+            />
+            <Button
+              variant="outline"
+              size="default"
+              onClick={fetchRepos}
+              disabled={isLoading || !username.trim()}
+              className="gap-1.5"
+            >
+              <Search className="w-4 h-4" />
+              {isLoading ? "Loading..." : "Browse"}
+            </Button>
+          </>
         )}
-        <Button
-          variant="outline"
-          size="default"
-          onClick={fetchRepos}
-          disabled={isLoading || (!isConnected && !username.trim())}
-          className={isConnected ? "gap-1.5 ml-auto" : "gap-1.5"}
-        >
-          {isConnected ? <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} /> : <Search className="w-4 h-4" />}
-          {isLoading ? "Loading..." : isConnected ? "Refresh" : "Browse"}
-        </Button>
+        {isConnected && isLoading && (
+          <p className="text-sm text-muted-foreground font-body">Loading your repos...</p>
+        )}
       </div>
 
       <AnimatePresence>
