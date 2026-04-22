@@ -54,15 +54,22 @@ const Index = () => {
 
       setResult(data.result);
 
-      // Persist the analysis so it can be shared via link
+      // Persist the analysis so it can be shared via link.
+      // We store the structured payload (breakdown + suggestions) inside the
+      // existing `suggestions` jsonb column to avoid a schema change.
       try {
+        const r = data.result;
+        const payload = {
+          breakdown: r.breakdown ?? [],
+          suggestions: r.suggestions ?? [],
+        };
         const { data: saved, error: saveError } = await supabase
           .from("shared_analyses")
           .insert({
             repo_url: repoUrl.trim(),
-            score: data.result.score,
-            explanation: data.result.explanation,
-            suggestions: data.result.suggestions,
+            score: r.score,
+            explanation: r.summary ?? r.explanation ?? "",
+            suggestions: payload,
           })
           .select("id")
           .single();
