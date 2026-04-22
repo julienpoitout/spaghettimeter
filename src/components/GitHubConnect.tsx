@@ -7,8 +7,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
 import { Github, X, ExternalLink, CheckCircle2, ShieldAlert } from "lucide-react";
 
-const TOKEN_CREATE_URL =
-  "https://github.com/settings/personal-access-tokens/new?name=SpaghettiMeter&description=Read-only%20access%20for%20SpaghettiMeter%20analysis";
+const CLASSIC_TOKEN_URL =
+  "https://github.com/settings/tokens/new?scopes=repo&description=SpaghettiMeter";
+const FINEGRAINED_TOKEN_URL =
+  "https://github.com/settings/personal-access-tokens/new?name=SpaghettiMeter&description=Read-only%20access%20for%20SpaghettiMeter";
 
 const GitHubConnect = () => {
   const { token, setToken, clearToken, isConnected } = useGitHubToken();
@@ -102,23 +104,35 @@ const GitHubConnect = () => {
               </p>
 
               <div className="rounded-md border border-border bg-muted/30 p-4 mb-4 space-y-2">
-                <p className="text-sm font-body font-semibold text-foreground">How to create a token:</p>
+                <p className="text-sm font-body font-semibold text-foreground">Easiest: Classic token (recommended)</p>
                 <ol className="text-sm font-body text-muted-foreground space-y-1 list-decimal list-inside">
                   <li>
                     Open{" "}
                     <a
-                      href={TOKEN_CREATE_URL}
+                      href={CLASSIC_TOKEN_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline inline-flex items-center gap-0.5"
                     >
-                      GitHub's token page <ExternalLink className="w-3 h-3" />
-                    </a>
+                      GitHub's classic token page <ExternalLink className="w-3 h-3" />
+                    </a>{" "}
+                    (the <code className="text-xs bg-muted px-1 rounded">repo</code> scope is pre-selected)
                   </li>
-                  <li>Choose <strong>Fine-grained token</strong>, select the repos you want to analyze</li>
-                  <li>Under <strong>Repository permissions</strong>, set <strong>Contents</strong> → <strong>Read-only</strong></li>
-                  <li>Generate, copy the token, and paste it below</li>
+                  <li>Set an expiration, click <strong>Generate token</strong></li>
+                  <li>Copy the token (starts with <code className="text-xs bg-muted px-1 rounded">ghp_</code>) and paste it below</li>
                 </ol>
+                <p className="text-xs font-body text-muted-foreground pt-2 border-t border-border/50">
+                  Prefer a{" "}
+                  <a
+                    href={FINEGRAINED_TOKEN_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline inline-flex items-center gap-0.5"
+                  >
+                    fine-grained token <ExternalLink className="w-3 h-3" />
+                  </a>
+                  ? Select <strong>All repositories</strong> (or every repo you want listed) and grant <strong>Repository permissions → Contents: Read-only</strong> + <strong>Metadata: Read-only</strong>.
+                </p>
               </div>
 
               <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 mb-4 flex gap-2">
