@@ -7,11 +7,14 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-async function fetchRepoFiles(owner: string, repo: string): Promise<string> {
+async function fetchRepoFiles(owner: string, repo: string, token?: string): Promise<string> {
+  const ghHeaders: Record<string, string> = { "User-Agent": "SpaghettiMeter" };
+  if (token) ghHeaders.Authorization = `Bearer ${token}`;
+
   // Get the repo tree recursively
   const treeRes = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`,
-    { headers: { "User-Agent": "SpaghettiMeter" } }
+    { headers: ghHeaders }
   );
 
   if (!treeRes.ok) {
@@ -51,7 +54,7 @@ async function fetchRepoFiles(owner: string, repo: string): Promise<string> {
     try {
       const res = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/contents/${file.path}`,
-        { headers: { "User-Agent": "SpaghettiMeter", Accept: "application/vnd.github.raw" } }
+        { headers: { ...ghHeaders, Accept: "application/vnd.github.raw" } }
       );
       if (res.ok) {
         const text = await res.text();
