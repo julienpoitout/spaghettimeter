@@ -149,11 +149,28 @@ ${knowledgeContext}
 You MUST respond with valid JSON using this exact structure (no markdown, no code fences):
 {
   "score": <number between 0.1 and 10.0>,
-  "explanation": "<2-4 paragraph analysis of the code quality, with specific examples from the code>",
-  "suggestions": ["<suggestion 1>", "<suggestion 2>", "<suggestion 3>", "<suggestion 4>", "<suggestion 5>"]
+  "summary": "<one short punchy paragraph (2-3 sentences) giving the overall verdict, with personality>",
+  "breakdown": [
+    {
+      "category": "<one of: Structure & Organization | Naming & Readability | Complexity & Coupling | Error Handling & Safety | Consistency & Patterns>",
+      "rating": "<one of: excellent | good | mediocre | poor | terrible>",
+      "observation": "<2-3 sentences citing concrete file names or patterns from the code>"
+    }
+  ],
+  "suggestions": [
+    {
+      "title": "<short imperative title, max 8 words>",
+      "detail": "<1-2 sentences explaining what to do and why, referencing files when possible>",
+      "priority": "<one of: high | medium | low>"
+    }
+  ]
 }
 
-Be specific! Reference actual file names and code patterns you observed. Be entertaining but accurate.`;
+Rules:
+- "breakdown" MUST contain exactly 5 entries, one per category listed above, in that order.
+- "suggestions" MUST contain 4 to 6 entries, ordered from highest to lowest priority.
+- Be specific: reference actual file names, function names, and code patterns you observed.
+- Be entertaining (Italian-chef voice welcome) but accurate.`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -204,9 +221,21 @@ Be specific! Reference actual file names and code patterns you observed. Be ente
     if (typeof result.score !== "number" || result.score < 0.1 || result.score > 10) {
       result.score = Math.max(0.1, Math.min(10, result.score || 5));
     }
-    if (!Array.isArray(result.suggestions)) {
-      result.suggestions = ["Review code organization", "Add documentation"];
+    if (typeof result.summary !== "string") {
+      result.summary = result.explanation || "No summary provided.";
     }
+    if (!Array.isArray(result.breakdown)) {
+      result.breakdown = [];
+    }
+    if (!Array.isArray(result.suggestions)) {
+      result.suggestions = [];
+    }
+    // Normalize legacy string suggestions to objects
+    result.suggestions = result.suggestions.map((s: any) =>
+      typeof s === "string"
+        ? { title: s.slice(0, 60), detail: s, priority: "medium" }
+        : { title: s.title || "Suggestion", detail: s.detail || "", priority: s.priority || "medium" }
+    );
 
     console.log(`Analysis complete. Score: ${result.score}`);
 
