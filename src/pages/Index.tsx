@@ -10,6 +10,8 @@ import KnowledgeManager from "@/components/KnowledgeManager";
 import RepoSelector from "@/components/RepoSelector";
 import { LogOut } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
+import GitHubConnect from "@/components/GitHubConnect";
+import { useGitHubToken } from "@/hooks/useGitHubToken";
 
 const Index = () => {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -18,6 +20,7 @@ const Index = () => {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const { toast } = useToast();
   const { user, isAdmin, signOut } = useAuth();
+  const { token } = useGitHubToken();
 
   const handleAnalyze = async () => {
     if (!repoUrl.trim()) {
@@ -41,7 +44,7 @@ const Index = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke("analyze-repo", {
-        body: { repoUrl: repoUrl.trim() },
+        body: { repoUrl: repoUrl.trim(), githubToken: token || undefined },
       });
 
       if (error) throw error;
@@ -63,6 +66,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="absolute top-4 right-4 flex items-center gap-2">
+        <GitHubConnect />
         <Button variant="ghost" size="sm" onClick={() => setFeedbackOpen(true)} className="text-muted-foreground hover:text-primary">
           Feedback?
         </Button>
