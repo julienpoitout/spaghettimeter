@@ -12,9 +12,10 @@ export interface AnalysisResult {
 interface AnalysisResultsProps {
   result: AnalysisResult;
   repoUrl: string;
+  shareId?: string | null;
 }
 
-const AnalysisResults = ({ result, repoUrl }: AnalysisResultsProps) => {
+const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => {
   return (
     <motion.div
       className="w-full max-w-2xl mx-auto space-y-6"
@@ -80,7 +81,7 @@ const AnalysisResults = ({ result, repoUrl }: AnalysisResultsProps) => {
       </motion.div>
 
       {/* Share */}
-      <ShareResults score={result.score} repoUrl={repoUrl} />
+      <ShareResults score={result.score} repoUrl={repoUrl} shareId={shareId} />
     </motion.div>
   );
 };

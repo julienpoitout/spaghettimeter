@@ -56,6 +56,33 @@ export type Database = {
         }
         Relationships: []
       }
+      shared_analyses: {
+        Row: {
+          created_at: string
+          explanation: string
+          id: string
+          repo_url: string
+          score: number
+          suggestions: Json
+        }
+        Insert: {
+          created_at?: string
+          explanation: string
+          id?: string
+          repo_url: string
+          score: number
+          suggestions?: Json
+        }
+        Update: {
+          created_at?: string
+          explanation?: string
+          id?: string
+          repo_url?: string
+          score?: number
+          suggestions?: Json
+        }
+        Relationships: []
+      }
       spaghetti_knowledge: {
         Row: {
           category: string

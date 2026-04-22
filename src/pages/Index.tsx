@@ -18,6 +18,7 @@ const Index = () => {
   const [repoUrl, setRepoUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [shareId, setShareId] = useState<string | null>(null);
   const { toast } = useToast();
   const { user, isAdmin, signOut } = useAuth();
   const { token } = useGitHubToken();
@@ -41,6 +42,7 @@ const Index = () => {
 
     setIsLoading(true);
     setResult(null);
+    setShareId(null);
 
     try {
       const { data, error } = await supabase.functions.invoke("analyze-repo", {
@@ -51,6 +53,24 @@ const Index = () => {
       if (!data?.success) throw new Error(data?.error || "Analysis failed");
 
       setResult(data.result);
+
+      // Persist the analysis so it can be shared via link
+      try {
+        const { data: saved, error: saveError } = await supabase
+          .from("shared_analyses")
+          .insert({
+            repo_url: repoUrl.trim(),
+            score: data.result.score,
+            explanation: data.result.explanation,
+            suggestions: data.result.suggestions,
+          })
+          .select("id")
+          .single();
+        if (saveError) throw saveError;
+        if (saved?.id) setShareId(saved.id);
+      } catch (saveErr) {
+        console.error("Failed to save shareable analysis:", saveErr);
+      }
     } catch (err: any) {
       console.error("Analysis error:", err);
       toast({
@@ -171,7 +191,7 @@ const Index = () => {
         {/* Results */}
         <AnimatePresence>
           {result && !isLoading && (
-            <AnalysisResults result={result} repoUrl={repoUrl} />
+            <AnalysisResults result={result} repoUrl={repoUrl} shareId={shareId} />
           )}
         </AnimatePresence>
 
