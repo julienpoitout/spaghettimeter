@@ -7,15 +7,18 @@ import { Link, Mail, Share2 } from "lucide-react";
 interface ShareResultsProps {
   score: number;
   repoUrl: string;
+  shareId?: string | null;
 }
 
-const ShareResults = ({ score, repoUrl }: ShareResultsProps) => {
+const ShareResults = ({ score, repoUrl, shareId }: ShareResultsProps) => {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
   const repoName = repoUrl.replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "");
   const shareText = `🍝 My repo "${repoName}" scored ${score.toFixed(1)}/10 on SpaghettiMeter! How tangled is YOUR code?`;
-  const shareUrl = window.location.origin;
+  const shareUrl = shareId
+    ? `${window.location.origin}/s/${shareId}`
+    : window.location.origin;
   const fullText = `${shareText}\n${shareUrl}`;
   const encodedText = encodeURIComponent(shareText);
   const encodedUrl = encodeURIComponent(shareUrl);
