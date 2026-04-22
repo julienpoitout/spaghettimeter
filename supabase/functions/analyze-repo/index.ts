@@ -7,11 +7,14 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-async function fetchRepoFiles(owner: string, repo: string): Promise<string> {
+async function fetchRepoFiles(owner: string, repo: string, token?: string): Promise<string> {
+  const ghHeaders: Record<string, string> = { "User-Agent": "SpaghettiMeter" };
+  if (token) ghHeaders.Authorization = `Bearer ${token}`;
+
   // Get the repo tree recursively
   const treeRes = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`,
-    { headers: { "User-Agent": "SpaghettiMeter" } }
+    { headers: ghHeaders }
   );
 
   if (!treeRes.ok) {
@@ -51,7 +54,7 @@ async function fetchRepoFiles(owner: string, repo: string): Promise<string> {
     try {
       const res = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/contents/${file.path}`,
-        { headers: { "User-Agent": "SpaghettiMeter", Accept: "application/vnd.github.raw" } }
+        { headers: { ...ghHeaders, Accept: "application/vnd.github.raw" } }
       );
       if (res.ok) {
         const text = await res.text();
@@ -73,7 +76,7 @@ serve(async (req) => {
   }
 
   try {
-    const { repoUrl } = await req.json();
+    const { repoUrl, githubToken } = await req.json();
     if (!repoUrl) {
       return new Response(
         JSON.stringify({ success: false, error: "repoUrl is required" }),
@@ -92,10 +95,16 @@ serve(async (req) => {
 
     const [, owner, repo] = match;
 
-    console.log(`Analyzing repo: ${owner}/${repo}`);
+    console.log(`Analyzing repo: ${owner}/${repo} (auth: ${githubToken ? "yes" : "no"})`);
+
+    // Basic token sanity check
+    const safeToken =
+      typeof githubToken === "string" && githubToken.length > 10 && githubToken.length < 500
+        ? githubToken
+        : undefined;
 
     // Fetch repo files
-    const codeContent = await fetchRepoFiles(owner, repo.replace(/\.git$/, ""));
+    const codeContent = await fetchRepoFiles(owner, repo.replace(/\.git$/, ""), safeToken);
 
     // Fetch knowledge base
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;

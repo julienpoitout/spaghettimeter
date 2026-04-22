@@ -2,7 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Star, GitFork, ChevronRight } from "lucide-react";
+import { Search, Star, GitFork, ChevronRight, Lock, Globe } from "lucide-react";
+import { useGitHubToken } from "@/hooks/useGitHubToken";
 
 interface Repo {
   id: number;
@@ -14,6 +15,7 @@ interface Repo {
   stargazers_count: number;
   forks_count: number;
   updated_at: string;
+  private: boolean;
 }
 
 interface RepoSelectorProps {
@@ -42,19 +44,24 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const { token, isConnected } = useGitHubToken();
 
   const fetchRepos = async () => {
-    if (!username.trim()) return;
+    if (!isConnected && !username.trim()) return;
     setIsLoading(true);
     setError(null);
     setHasSearched(true);
 
     try {
-      const res = await fetch(
-        `https://api.github.com/users/${encodeURIComponent(username.trim())}/repos?sort=updated&per_page=30`
-      );
+      const url = isConnected
+        ? `https://api.github.com/user/repos?visibility=all&affiliation=owner,collaborator,organization_member&sort=updated&per_page=100`
+        : `https://api.github.com/users/${encodeURIComponent(username.trim())}/repos?sort=updated&per_page=30`;
+      const headers: Record<string, string> = { "User-Agent": "SpaghettiMeter" };
+      if (isConnected && token) headers.Authorization = `Bearer ${token}`;
+      const res = await fetch(url, { headers });
       if (!res.ok) {
         if (res.status === 404) throw new Error("User not found");
+        if (res.status === 401) throw new Error("Invalid GitHub token. Reconnect.");
         if (res.status === 403) throw new Error("Rate limit exceeded. Try again later.");
         throw new Error("Failed to fetch repos");
       }
@@ -71,25 +78,29 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
   return (
     <div className="space-y-3">
       <p className="text-sm font-body text-muted-foreground">
-        Or browse repos by GitHub username:
+        {isConnected
+          ? "Browse your repos (public + private):"
+          : "Or browse public repos by GitHub username:"}
       </p>
       <div className="flex gap-2">
-        <Input
-          placeholder="GitHub username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && fetchRepos()}
-          className="flex-1 h-10 text-sm font-body"
-        />
+        {!isConnected && (
+          <Input
+            placeholder="GitHub username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && fetchRepos()}
+            className="flex-1 h-10 text-sm font-body"
+          />
+        )}
         <Button
           variant="outline"
           size="default"
           onClick={fetchRepos}
-          disabled={isLoading || !username.trim()}
-          className="gap-1.5"
+          disabled={isLoading || (!isConnected && !username.trim())}
+          className={isConnected ? "gap-1.5 w-full" : "gap-1.5"}
         >
           <Search className="w-4 h-4" />
-          {isLoading ? "Loading..." : "Browse"}
+          {isLoading ? "Loading..." : isConnected ? "Browse my repos" : "Browse"}
         </Button>
       </div>
 
@@ -127,6 +138,16 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
                   <div className="flex items-center gap-2">
                     <span className="font-display text-sm font-semibold text-foreground truncate">
                       {repo.name}
+                    </span>
+                    <span
+                      className={`flex items-center gap-0.5 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${
+                        repo.private
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {repo.private ? <Lock className="w-2.5 h-2.5" /> : <Globe className="w-2.5 h-2.5" />}
+                      {repo.private ? "Private" : "Public"}
                     </span>
                     {repo.language && (
                       <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
