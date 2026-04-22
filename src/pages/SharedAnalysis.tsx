@@ -28,10 +28,22 @@ const SharedAnalysis = () => {
         setError("Analysis not found");
       } else {
         setRepoUrl(data.repo_url);
+        // suggestions column may be a legacy string[] or the new structured
+        // payload { breakdown, suggestions }.
+        const raw = data.suggestions as any;
+        let breakdown: any[] = [];
+        let suggestions: any[] = [];
+        if (Array.isArray(raw)) {
+          suggestions = raw;
+        } else if (raw && typeof raw === "object") {
+          breakdown = Array.isArray(raw.breakdown) ? raw.breakdown : [];
+          suggestions = Array.isArray(raw.suggestions) ? raw.suggestions : [];
+        }
         setResult({
           score: Number(data.score),
-          explanation: data.explanation,
-          suggestions: Array.isArray(data.suggestions) ? (data.suggestions as string[]) : [],
+          summary: data.explanation,
+          breakdown,
+          suggestions,
         });
       }
       setLoading(false);
