@@ -1,0 +1,103 @@
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+
+const SharedAnalysis = () => {
+  const { id } = useParams<{ id: string }>();
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [repoUrl, setRepoUrl] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!id) return;
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("shared_analyses")
+        .select("repo_url, score, explanation, suggestions")
+        .eq("id", id)
+        .maybeSingle();
+      if (error) {
+        setError("Failed to load analysis");
+      } else if (!data) {
+        setError("Analysis not found");
+      } else {
+        setRepoUrl(data.repo_url);
+        setResult({
+          score: Number(data.score),
+          explanation: data.explanation,
+          suggestions: Array.isArray(data.suggestions) ? (data.suggestions as string[]) : [],
+        });
+      }
+      setLoading(false);
+    };
+    load();
+  }, [id]);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container max-w-3xl mx-auto px-4 py-12 space-y-8">
+        <motion.div
+          className="text-center space-y-4"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="text-5xl">🍝</div>
+          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+            Shared Spaghetti<span className="text-primary">Meter</span> Result
+          </h1>
+        </motion.div>
+
+        {loading && (
+          <p className="text-center text-muted-foreground font-body">Loading analysis...</p>
+        )}
+
+        {error && (
+          <div className="text-center space-y-4">
+            <p className="text-destructive font-body">{error}</p>
+            <Link to="/">
+              <Button variant="outline" className="gap-2">
+                <ArrowLeft className="w-4 h-4" /> Analyze your own repo
+              </Button>
+            </Link>
+          </div>
+        )}
+
+        {result && !loading && (
+          <>
+            <AnalysisResults result={result} repoUrl={repoUrl} shareId={id} />
+            <div className="text-center pt-4">
+              <Link to="/">
+                <Button variant="spaghettify" size="lg" className="gap-2">
+                  🍴 Spaghettify your own repo
+                </Button>
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
+
+      <footer className="py-6 text-center">
+        <p className="text-xs text-muted-foreground font-body">
+          Created by{" "}
+          <a
+            href="https://curiouscode.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Curious Code
+          </a>
+        </p>
+      </footer>
+    </div>
+  );
+};
+
+export default SharedAnalysis;
