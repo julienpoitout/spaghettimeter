@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Star, GitFork, ChevronRight, Lock, Globe } from "lucide-react";
+import { Search, Star, GitFork, ChevronRight, Lock, Globe, RefreshCw } from "lucide-react";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
 
 interface Repo {
@@ -46,7 +46,7 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
   const [hasSearched, setHasSearched] = useState(false);
   const { token, isConnected } = useGitHubToken();
 
-  const fetchRepos = async () => {
+  const fetchRepos = useCallback(async () => {
     if (!isConnected && !username.trim()) return;
     setIsLoading(true);
     setError(null);
@@ -73,7 +73,19 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isConnected, token, username]);
+
+  // Auto-load repos as soon as a GitHub token is connected
+  useEffect(() => {
+    if (isConnected) {
+      fetchRepos();
+    } else {
+      setRepos([]);
+      setHasSearched(false);
+      setError(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, token]);
 
   return (
     <div className="space-y-3">
@@ -97,10 +109,10 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
           size="default"
           onClick={fetchRepos}
           disabled={isLoading || (!isConnected && !username.trim())}
-          className={isConnected ? "gap-1.5 w-full" : "gap-1.5"}
+          className={isConnected ? "gap-1.5 ml-auto" : "gap-1.5"}
         >
-          <Search className="w-4 h-4" />
-          {isLoading ? "Loading..." : isConnected ? "Browse my repos" : "Browse"}
+          {isConnected ? <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} /> : <Search className="w-4 h-4" />}
+          {isLoading ? "Loading..." : isConnected ? "Refresh" : "Browse"}
         </Button>
       </div>
 
