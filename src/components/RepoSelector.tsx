@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Star, GitFork, ChevronRight, Lock, Globe } from "lucide-react";
+import { Search, Star, GitFork, ChevronRight, Lock, Globe, RefreshCw } from "lucide-react";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
 
 interface Repo {
@@ -109,10 +109,10 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
           size="default"
           onClick={fetchRepos}
           disabled={isLoading || (!isConnected && !username.trim())}
-          className={isConnected ? "gap-1.5 w-full" : "gap-1.5"}
+          className={isConnected ? "gap-1.5 ml-auto" : "gap-1.5"}
         >
-          <Search className="w-4 h-4" />
-          {isLoading ? "Loading..." : isConnected ? "Browse my repos" : "Browse"}
+          {isConnected ? <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} /> : <Search className="w-4 h-4" />}
+          {isLoading ? "Loading..." : isConnected ? "Refresh" : "Browse"}
         </Button>
       </div>
 
