@@ -35,12 +35,38 @@ const FeedbackForm = ({ open, onClose }: FeedbackFormProps) => {
 
     setIsSubmitting(true);
     try {
+      const id = crypto.randomUUID();
+      const trimmedName = name.trim();
+      const trimmedEmail = email.trim() || null;
+      const trimmedMessage = message.trim();
+
       const { error } = await supabase.from("feedback").insert({
-        name: name.trim(),
-        email: email.trim() || null,
-        message: message.trim(),
+        id,
+        name: trimmedName,
+        email: trimmedEmail,
+        message: trimmedMessage,
       });
       if (error) throw error;
+
+      // Notify the SpaghettiMeter team — fire and forget so a slow email
+      // send never blocks the user-facing success state.
+      supabase.functions
+        .invoke("send-transactional-email", {
+          body: {
+            templateName: "feedback-notification",
+            recipientEmail: "julienpoitout@gmail.com",
+            idempotencyKey: `feedback-notify-${id}`,
+            templateData: {
+              name: trimmedName,
+              email: trimmedEmail ?? "Not provided",
+              message: trimmedMessage,
+              submittedAt: new Date().toLocaleString(),
+            },
+          },
+        })
+        .catch((notifyErr) => {
+          console.error("Failed to send feedback notification email:", notifyErr);
+        });
 
       toast({ title: "Thanks for your feedback! 🎉" });
       setName("");
