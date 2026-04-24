@@ -12,6 +12,7 @@ import { LogOut } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
 import GitHubConnect from "@/components/GitHubConnect";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
+import Seo from "@/components/Seo";
 
 const Index = () => {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -22,6 +23,14 @@ const Index = () => {
   const { toast } = useToast();
   const { user, isAdmin, signOut } = useAuth();
   const { token } = useGitHubToken();
+
+  const seo = (
+    <Seo
+      title="SpaghettiMeter — Measure How Tangled Your Code Is"
+      description="Free AI-powered code quality scanner. Paste any GitHub repo and get an instant spaghetti-code score from 0 to 10, plus actionable refactoring suggestions."
+      canonical="https://spaghettimeter.com/"
+    />
+  );
 
   const handleAnalyze = async () => {
     if (!repoUrl.trim()) {
