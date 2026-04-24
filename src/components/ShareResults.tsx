@@ -97,6 +97,15 @@ const ShareResults = ({ score, repoUrl, shareId }: ShareResultsProps) => {
               {ch.name}
             </Button>
           ))}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-2 text-muted-foreground hover:text-foreground"
+            onClick={copyLink}
+          >
+            <Link className="w-5 h-5" />
+            Link
+          </Button>
         </motion.div>
       )}
     </motion.div>
