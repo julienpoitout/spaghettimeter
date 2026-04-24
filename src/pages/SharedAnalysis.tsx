@@ -84,7 +84,7 @@ const SharedAnalysis = () => {
         {result && !loading && (
           <>
             <AnalysisResults result={result} repoUrl={repoUrl} shareId={id} />
-            <div className="text-center pt-4">
+            <div className="text-center pt-4 pb-24">
               <Link to="/">
                 <Button variant="spaghettify" size="lg" className="gap-2">
                   🍴 Spaghettify your own repo
@@ -94,6 +94,20 @@ const SharedAnalysis = () => {
           </>
         )}
       </div>
+
+      {result && !loading && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4">
+          <Link to="/">
+            <Button
+              variant="spaghettify"
+              size="lg"
+              className="gap-2 shadow-2xl shadow-primary/30"
+            >
+              🍴 Spaghettify your own repo
+            </Button>
+          </Link>
+        </div>
+      )}
 
       <footer className="py-6 text-center">
         <p className="text-xs text-muted-foreground font-body">
