@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Star, GitFork, ChevronRight, Lock, Globe } from "lucide-react";
+import { Search, Star, GitFork, ChevronRight, Lock, Globe, Info } from "lucide-react";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
 
 interface Repo {
@@ -120,6 +120,16 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
           <p className="text-sm text-muted-foreground font-body">Loading your repos...</p>
         )}
       </div>
+
+      {!isConnected && (
+        <p className="flex items-start gap-1.5 text-xs text-muted-foreground font-body">
+          <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-primary" />
+          <span>
+            Want to analyse <strong className="text-foreground">private repos</strong>? Connect
+            your GitHub account above.
+          </span>
+        </p>
+      )}
 
       <AnimatePresence>
         {error && (
