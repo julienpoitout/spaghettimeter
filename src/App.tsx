@@ -9,6 +9,9 @@ import Auth from "./pages/Auth.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import SharedAnalysis from "./pages/SharedAnalysis.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
+import Pricing from "./pages/Pricing.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 
 const queryClient = new QueryClient();
 
@@ -19,11 +22,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <PaymentTestModeBanner />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/s/:id" element={<SharedAnalysis />} />
             <Route path="/unsubscribe" element={<Unsubscribe />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

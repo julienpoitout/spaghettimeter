@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,11 +9,12 @@ import { useAuth } from "@/hooks/useAuth";
 import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
 import KnowledgeManager from "@/components/KnowledgeManager";
 import RepoSelector from "@/components/RepoSelector";
-import { LogOut } from "lucide-react";
+import { LogOut, LayoutDashboard, Crown, Bookmark } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
 import GitHubConnect from "@/components/GitHubConnect";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
 import Seo from "@/components/Seo";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const Index = () => {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -20,9 +22,13 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [shareId, setShareId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const { toast } = useToast();
   const { user, isAdmin, signOut } = useAuth();
   const { token } = useGitHubToken();
+  const { isPro, remainingAnalyses, savedCount, savedLimit, refresh } = useSubscription();
+  const navigate = useNavigate();
 
   const seo = (
     <Seo
@@ -91,6 +97,7 @@ const Index = () => {
     setIsLoading(true);
     setResult(null);
     setShareId(null);
+    setSaved(false);
 
     try {
       const { data, error } = await supabase.functions.invoke("analyze-repo", {
@@ -98,9 +105,21 @@ const Index = () => {
       });
 
       if (error) throw error;
-      if (!data?.success) throw new Error(data?.error || "Analysis failed");
+      if (!data?.success) {
+        if (data?.reason === "quota" || data?.reason === "auth_required") {
+          toast({
+            title: data.reason === "auth_required" ? "Sign in required" : "Weekly limit reached",
+            description: data.error || "Upgrade to Pro for unlimited analyses.",
+            variant: "destructive",
+          });
+          navigate(data.reason === "auth_required" ? "/auth?next=/" : "/pricing");
+          return;
+        }
+        throw new Error(data?.error || "Analysis failed");
+      }
 
       setResult(data.result);
+      refresh();
 
       // Persist the analysis so it can be shared via link.
       // We store the structured payload (breakdown + suggestions) inside the
@@ -138,11 +157,61 @@ const Index = () => {
     }
   };
 
+  const handleSaveToDashboard = async () => {
+    if (!user) {
+      navigate("/auth?next=/");
+      return;
+    }
+    if (!result) return;
+    setSaving(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("save-analysis", {
+        body: {
+          repoUrl: repoUrl.trim(),
+          score: result.score,
+          summary: result.summary || result.explanation || "",
+          breakdown: result.breakdown || [],
+          suggestions: result.suggestions || [],
+        },
+      });
+      if (error) throw error;
+      if (!data?.success) {
+        if (data?.reason === "save_limit") {
+          toast({
+            title: "Save limit reached",
+            description: "Free plan allows 1 saved analysis. Upgrade to Pro for unlimited saves.",
+            variant: "destructive",
+          });
+          navigate("/pricing");
+          return;
+        }
+        throw new Error(data?.error || "Save failed");
+      }
+      setSaved(true);
+      refresh();
+      toast({ title: "Saved to your dashboard 🍝" });
+    } catch (e: any) {
+      toast({ title: "Could not save", description: e.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {seo}
       <div className="absolute top-4 right-4 flex items-center gap-2">
         <GitHubConnect />
+        {!isPro && (
+          <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary">
+            <Link to="/pricing"><Crown className="w-4 h-4 mr-1" /> Pro</Link>
+          </Button>
+        )}
+        {user && (
+          <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+            <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-1" /> Dashboard</Link>
+          </Button>
+        )}
         <Button variant="ghost" size="sm" onClick={() => setFeedbackOpen(true)} className="text-muted-foreground hover:text-primary">
           Feedback?
         </Button>
@@ -174,6 +243,17 @@ const Index = () => {
           <h2 className="text-muted-foreground font-body text-lg max-w-md mx-auto font-normal">
             Spot spaghetti code in any GitHub repo. Paste a URL and get an instant AI-powered code-quality score.
           </h2>
+          {user && !isPro && remainingAnalyses !== null && (
+            <p className="text-xs text-muted-foreground font-body">
+              {remainingAnalyses} of 3 free analyses left this week ·{" "}
+              <Link to="/pricing" className="text-primary hover:underline">Go Pro for unlimited</Link>
+            </p>
+          )}
+          {isPro && (
+            <p className="text-xs text-primary font-body inline-flex items-center justify-center gap-1">
+              <Crown className="w-3 h-3" /> Pro · unlimited analyses
+            </p>
+          )}
         </motion.div>
 
         {/* Input area */}
@@ -247,7 +327,25 @@ const Index = () => {
         {/* Results */}
         <AnimatePresence>
           {result && !isLoading && (
-            <AnalysisResults result={result} repoUrl={repoUrl} shareId={shareId} />
+            <div className="space-y-4">
+              <AnalysisResults result={result} repoUrl={repoUrl} shareId={shareId} />
+              <div className="flex justify-center">
+                <Button
+                  variant={saved ? "outline" : "spaghettify"}
+                  onClick={handleSaveToDashboard}
+                  disabled={saving || saved}
+                >
+                  <Bookmark className="w-4 h-4 mr-2" />
+                  {saved ? "Saved to dashboard" : saving ? "Saving…" : "Save to dashboard"}
+                </Button>
+              </div>
+              {!isPro && user && savedLimit !== null && savedCount >= savedLimit && !saved && (
+                <p className="text-center text-xs text-muted-foreground">
+                  Free plan allows {savedLimit} saved analysis.{" "}
+                  <Link to="/pricing" className="text-primary hover:underline">Upgrade to Pro</Link>
+                </p>
+              )}
+            </div>
           )}
         </AnimatePresence>
 
