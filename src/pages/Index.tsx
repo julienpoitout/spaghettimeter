@@ -106,7 +106,7 @@ const Index = () => {
 
       if (error) throw error;
       if (!data?.success) {
-        if (data?.reason === "rate_limit" || data?.reason === "auth_required") {
+        if (data?.reason === "quota" || data?.reason === "auth_required") {
           toast({
             title: data.reason === "auth_required" ? "Sign in required" : "Weekly limit reached",
             description: data.error || "Upgrade to Pro for unlimited analyses.",
