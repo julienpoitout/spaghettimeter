@@ -29,6 +29,45 @@ const Index = () => {
       title="SpaghettiMeter — Measure How Tangled Your Code Is"
       description="Free AI-powered code quality scanner. Paste any GitHub repo and get an instant spaghetti-code score from 0 to 10, plus actionable refactoring suggestions."
       canonical="https://spaghettimeter.com/"
+      ogImage="https://spaghettimeter.com/og-image.png"
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "Is SpaghettiMeter free?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes — SpaghettiMeter is free to use for both public and private GitHub repositories.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can I analyse private repos?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. Connect your GitHub account with a personal access token and you'll be able to scan any repository you have access to, public or private.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Which languages are supported?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "SpaghettiMeter works with TypeScript, JavaScript, Python, Go, Rust, Java, C#, Ruby, PHP, Kotlin, Swift, C, C++ and more.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Do you store my source code?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "No. We fetch files only to run the analysis, then discard them. Only the score, summary and suggestions are stored when you choose to share the result.",
+            },
+          },
+        ],
+      }}
     />
   );
 
