@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      analysis_usage: {
+        Row: {
+          created_at: string
+          guest_fingerprint: string | null
+          id: string
+          repo_url: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          guest_fingerprint?: string | null
+          id?: string
+          repo_url: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          guest_fingerprint?: string | null
+          id?: string
+          repo_url?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -143,6 +167,39 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_analyses: {
+        Row: {
+          breakdown: Json
+          created_at: string
+          id: string
+          repo_url: string
+          score: number
+          suggestions: Json
+          summary: string | null
+          user_id: string
+        }
+        Insert: {
+          breakdown?: Json
+          created_at?: string
+          id?: string
+          repo_url: string
+          score: number
+          suggestions?: Json
+          summary?: string | null
+          user_id: string
+        }
+        Update: {
+          breakdown?: Json
+          created_at?: string
+          id?: string
+          repo_url?: string
+          score?: number
+          suggestions?: Json
+          summary?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       shared_analyses: {
         Row: {
           created_at: string
@@ -197,6 +254,54 @@ export type Database = {
           id?: string
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          price_id: string
+          product_id: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id: string
+          product_id: string
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id?: string
+          product_id?: string
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -262,6 +367,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_pro_user: { Args: { _user_id: string }; Returns: boolean }
       move_to_dlq: {
         Args: {
           dlq_name: string
