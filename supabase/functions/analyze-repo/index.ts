@@ -7,6 +7,13 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+async function sha256(text: string): Promise<string> {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 async function fetchRepoFiles(owner: string, repo: string, token?: string): Promise<string> {
   const ghHeaders: Record<string, string> = { "User-Agent": "SpaghettiMeter" };
   if (token) ghHeaders.Authorization = `Bearer ${token}`;
@@ -103,14 +110,87 @@ serve(async (req) => {
         ? githubToken
         : undefined;
 
-    // Fetch repo files
-    const codeContent = await fetchRepoFiles(owner, repo.replace(/\.git$/, ""), safeToken);
-
-    // Fetch knowledge base
+    // Identify caller (signed-in user or guest fingerprint)
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const sb = createClient(supabaseUrl, supabaseKey);
 
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+    let userId: string | null = null;
+    if (token) {
+      const { data: { user } } = await sb.auth.getUser(token);
+      if (user) userId = user.id;
+    }
+
+    // Private repos require sign-in
+    if (safeToken && !userId) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Sign in required to analyze private repos with a GitHub token.",
+          reason: "auth_required",
+        }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Determine plan
+    let isPro = false;
+    if (userId) {
+      const { data } = await sb.rpc("is_pro_user", { _user_id: userId });
+      isPro = !!data;
+    }
+
+    // Enforce 3-per-rolling-7-days quota for guests + Free users
+    let guestFingerprint: string | null = null;
+    if (!isPro) {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      let used = 0;
+      if (userId) {
+        const { count } = await sb
+          .from("analysis_usage")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .gte("created_at", sevenDaysAgo);
+        used = count ?? 0;
+      } else {
+        const ip =
+          req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+          req.headers.get("cf-connecting-ip") ||
+          "unknown";
+        const ua = req.headers.get("user-agent") || "unknown";
+        guestFingerprint = await sha256(`${ip}|${ua}`);
+        const { count } = await sb
+          .from("analysis_usage")
+          .select("id", { count: "exact", head: true })
+          .eq("guest_fingerprint", guestFingerprint)
+          .gte("created_at", sevenDaysAgo);
+        used = count ?? 0;
+      }
+
+      if (used >= 3) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: userId
+              ? "You've reached your 3 free analyses for the week. Upgrade to Pro for unlimited."
+              : "You've reached the free guest limit (3/week). Sign up or upgrade for more.",
+            reason: "quota",
+            plan: userId ? "free" : "guest",
+            used,
+            limit: 3,
+            upgradeUrl: "/pricing",
+          }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Fetch repo files
+    const codeContent = await fetchRepoFiles(owner, repo.replace(/\.git$/, ""), safeToken);
+
+    // Fetch knowledge base
     const { data: knowledge } = await sb
       .from("spaghetti_knowledge")
       .select("title, content, category");
@@ -238,6 +318,17 @@ Rules:
     );
 
     console.log(`Analysis complete. Score: ${result.score}`);
+
+    // Log usage (only for guests + Free; Pro is unmetered but we still log for analytics)
+    try {
+      await sb.from("analysis_usage").insert({
+        user_id: userId,
+        guest_fingerprint: userId ? null : guestFingerprint,
+        repo_url: repoUrl,
+      });
+    } catch (logErr) {
+      console.error("Failed to log usage:", logErr);
+    }
 
     return new Response(
       JSON.stringify({ success: true, result }),
