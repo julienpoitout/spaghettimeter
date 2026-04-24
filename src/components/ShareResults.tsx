@@ -59,8 +59,8 @@ const ShareResults = ({ score, repoUrl, shareId }: ShareResultsProps) => {
   ];
 
   const copyLink = async () => {
-    await navigator.clipboard.writeText(fullText);
-    toast({ title: "Copied to clipboard! 📋" });
+    await navigator.clipboard.writeText(shareUrl);
+    toast({ title: "Link copied to clipboard! 📋" });
   };
 
   return (
