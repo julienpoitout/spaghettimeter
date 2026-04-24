@@ -29,6 +29,45 @@ const Index = () => {
       title="SpaghettiMeter — Measure How Tangled Your Code Is"
       description="Free AI-powered code quality scanner. Paste any GitHub repo and get an instant spaghetti-code score from 0 to 10, plus actionable refactoring suggestions."
       canonical="https://spaghettimeter.com/"
+      ogImage="https://spaghettimeter.com/og-image.png"
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "Is SpaghettiMeter free?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes — SpaghettiMeter is free to use for both public and private GitHub repositories.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can I analyse private repos?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. Connect your GitHub account with a personal access token and you'll be able to scan any repository you have access to, public or private.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Which languages are supported?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "SpaghettiMeter works with TypeScript, JavaScript, Python, Go, Rust, Java, C#, Ruby, PHP, Kotlin, Swift, C, C++ and more.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Do you store my source code?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "No. We fetch files only to run the analysis, then discard them. Only the score, summary and suggestions are stored when you choose to share the result.",
+            },
+          },
+        ],
+      }}
     />
   );
 
@@ -132,9 +171,9 @@ const Index = () => {
           <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground">
             Spaghetti<span className="text-primary">Meter</span>
           </h1>
-          <p className="text-muted-foreground font-body text-lg max-w-md mx-auto">
-            How tangled is your code? Paste a GitHub repo and find out.
-          </p>
+          <h2 className="text-muted-foreground font-body text-lg max-w-md mx-auto font-normal">
+            Spot spaghetti code in any GitHub repo. Paste a URL and get an instant AI-powered code-quality score.
+          </h2>
         </motion.div>
 
         {/* Input area */}
@@ -217,6 +256,85 @@ const Index = () => {
           <KnowledgeManager />
         </div>
       </div>
+
+      {/* SEO content sections */}
+      <section className="container max-w-3xl mx-auto px-4 py-12 space-y-12">
+        <article className="space-y-4">
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+            What is spaghetti code?
+          </h2>
+          <p className="text-muted-foreground font-body leading-relaxed">
+            Spaghetti code is source code that is tangled, hard to follow, and difficult to maintain — full of
+            twisted control flow, deep nesting, duplicated logic, and unclear responsibilities. Just like a plate
+            of spaghetti, you can't pull on one strand without disturbing all the others. Spaghetti code slows
+            teams down, hides bugs, and makes onboarding new developers painful.
+          </p>
+          <p className="text-muted-foreground font-body leading-relaxed">
+            <strong className="text-foreground">SpaghettiMeter</strong> is a free tool that uses AI to scan any
+            public or private GitHub repository, score its code quality on a 0–10 scale, and generate concrete,
+            actionable refactoring suggestions you can apply today.
+          </p>
+        </article>
+
+        <article className="space-y-4">
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+            How it works
+          </h2>
+          <ol className="space-y-3 font-body text-muted-foreground list-decimal list-inside leading-relaxed">
+            <li>
+              <strong className="text-foreground">Paste a GitHub URL</strong> — or connect your GitHub account
+              to browse and analyse private repos.
+            </li>
+            <li>
+              <strong className="text-foreground">We fetch and analyse your code</strong> — language detection,
+              file structure, complexity, naming, duplication, and architectural smells.
+            </li>
+            <li>
+              <strong className="text-foreground">You get a spaghetti score</strong> — from 0 (al dente) to 10
+              (full pasta disaster), with a category breakdown and prioritised refactoring suggestions.
+            </li>
+            <li>
+              <strong className="text-foreground">Share the result</strong> — every analysis gets a public link
+              you can post to LinkedIn, X, or send to your team.
+            </li>
+          </ol>
+        </article>
+
+        <article className="space-y-4">
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+            Frequently asked questions
+          </h2>
+          <div className="space-y-5">
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Is SpaghettiMeter free?</h3>
+              <p className="text-muted-foreground font-body mt-1">
+                Yes — SpaghettiMeter is free to use for both public and private GitHub repositories.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Can I analyse private repos?</h3>
+              <p className="text-muted-foreground font-body mt-1">
+                Yes. Connect your GitHub account with a personal access token and you'll be able to scan any
+                repository you have access to, public or private.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Which languages are supported?</h3>
+              <p className="text-muted-foreground font-body mt-1">
+                SpaghettiMeter works with every popular language — TypeScript, JavaScript, Python, Go, Rust,
+                Java, C#, Ruby, PHP, Kotlin, Swift, C, C++ and more.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Do you store my source code?</h3>
+              <p className="text-muted-foreground font-body mt-1">
+                No. We fetch the files only to run the analysis, then discard them. Only the score, summary
+                and suggestions are stored when you choose to share the result.
+              </p>
+            </div>
+          </div>
+        </article>
+      </section>
 
       {/* Footer */}
       <footer className="py-6 text-center">

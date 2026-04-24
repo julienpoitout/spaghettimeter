@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import Seo from "@/components/Seo";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -42,6 +43,12 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <Seo
+        title="Sign in — SpaghettiMeter"
+        description="Sign in to SpaghettiMeter to save and share your code-quality analyses."
+        canonical="https://spaghettimeter.com/auth"
+        noindex
+      />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
