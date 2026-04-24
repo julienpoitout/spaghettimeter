@@ -6,6 +6,7 @@ interface SeoProps {
   canonical?: string;
   ogImage?: string;
   jsonLd?: Record<string, unknown>;
+  noindex?: boolean;
 }
 
 const setMeta = (selector: string, attr: string, value: string) => {
@@ -29,7 +30,7 @@ const setLink = (rel: string, href: string) => {
   el.setAttribute("href", href);
 };
 
-const Seo = ({ title, description, canonical, ogImage, jsonLd }: SeoProps) => {
+const Seo = ({ title, description, canonical, ogImage, jsonLd, noindex }: SeoProps) => {
   useEffect(() => {
     document.title = title;
     setMeta('meta[name="description"]', "content", description);
@@ -46,6 +47,20 @@ const Seo = ({ title, description, canonical, ogImage, jsonLd }: SeoProps) => {
       setMeta('meta[name="twitter:image"]', "content", ogImage);
     }
 
+    const robotsId = "page-robots";
+    let robots = document.head.querySelector<HTMLMetaElement>(`meta[name="robots"]#${robotsId}`);
+    if (noindex) {
+      if (!robots) {
+        robots = document.createElement("meta");
+        robots.setAttribute("name", "robots");
+        robots.id = robotsId;
+        document.head.appendChild(robots);
+      }
+      robots.setAttribute("content", "noindex, nofollow");
+    } else if (robots) {
+      robots.remove();
+    }
+
     const id = "page-jsonld";
     let script = document.getElementById(id) as HTMLScriptElement | null;
     if (jsonLd) {
@@ -59,7 +74,7 @@ const Seo = ({ title, description, canonical, ogImage, jsonLd }: SeoProps) => {
     } else if (script) {
       script.remove();
     }
-  }, [title, description, canonical, ogImage, jsonLd]);
+  }, [title, description, canonical, ogImage, jsonLd, noindex]);
 
   return null;
 };
