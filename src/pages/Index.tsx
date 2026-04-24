@@ -101,6 +101,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {seo}
       <div className="absolute top-4 right-4 flex items-center gap-2">
         <GitHubConnect />
         <Button variant="ghost" size="sm" onClick={() => setFeedbackOpen(true)} className="text-muted-foreground hover:text-primary">
