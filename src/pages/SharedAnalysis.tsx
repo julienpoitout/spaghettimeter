@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import Seo from "@/components/Seo";
 
 const SharedAnalysis = () => {
   const { id } = useParams<{ id: string }>();
@@ -53,6 +54,21 @@ const SharedAnalysis = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {result && (
+        <Seo
+          title={`${repoUrl.replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "")} scored ${result.score.toFixed(1)}/10 on SpaghettiMeter`}
+          description={`See the AI-powered spaghetti-code analysis of ${repoUrl.replace(/^https?:\/\/github\.com\//, "")} — score ${result.score.toFixed(1)}/10 with refactoring suggestions.`}
+          canonical={`https://spaghettimeter.com/s/${id}`}
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: `${repoUrl.replace(/^https?:\/\/github\.com\//, "")} scored ${result.score.toFixed(1)}/10 on SpaghettiMeter`,
+            about: repoUrl,
+            url: `https://spaghettimeter.com/s/${id}`,
+            publisher: { "@type": "Organization", name: "SpaghettiMeter" },
+          }}
+        />
+      )}
       <div className="container max-w-3xl mx-auto px-4 py-12 space-y-8">
         <motion.div
           className="text-center space-y-4"
