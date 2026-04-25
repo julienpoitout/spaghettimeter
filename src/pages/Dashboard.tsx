@@ -53,7 +53,10 @@ const Dashboard = () => {
   }, [searchParams, toast]);
 
   const fetchAnalyses = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const { data, error } = await supabase
       .from("saved_analyses")
