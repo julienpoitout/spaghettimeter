@@ -55,11 +55,19 @@ const Dashboard = () => {
   const fetchAnalyses = async () => {
     if (!user) return;
     setLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("saved_analyses")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
+    if (error) {
+      console.error("Failed to load saved analyses:", error);
+      toast({
+        title: "Couldn't load your dashboard",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
     setAnalyses((data as any) || []);
     setLoading(false);
   };
