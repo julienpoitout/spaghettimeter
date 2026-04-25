@@ -63,6 +63,21 @@ Deno.serve(async (req) => {
     const stripePrice = prices.data[0];
     const isRecurring = stripePrice.type === "recurring";
 
+    // Ensure the product has a tax code (required for automatic_tax). SaaS code.
+    const productId = typeof stripePrice.product === "string"
+      ? stripePrice.product
+      : stripePrice.product?.id;
+    if (productId) {
+      try {
+        const product = await stripe.products.retrieve(productId);
+        if (!product.tax_code) {
+          await stripe.products.update(productId, { tax_code: "txcd_10103001" });
+        }
+      } catch (e) {
+        console.error("Failed to ensure tax_code on product:", e);
+      }
+    }
+
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       mode: isRecurring ? "subscription" : "payment",
