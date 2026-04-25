@@ -53,7 +53,10 @@ const Dashboard = () => {
   }, [searchParams, toast]);
 
   const fetchAnalyses = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const { data, error } = await supabase
       .from("saved_analyses")
@@ -73,8 +76,9 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (authLoading) return;
     fetchAnalyses();
-  }, [user]);
+  }, [user, authLoading]);
 
   const repoGroups = useMemo(() => {
     const map = new Map<string, SavedAnalysis[]>();
