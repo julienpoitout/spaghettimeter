@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const Pricing = () => {
   const { user } = useAuth();
-  const { isPro } = useSubscription();
+  const { isPro, isLoading: subLoading } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showCheckout, setShowCheckout] = useState(false);
@@ -96,7 +96,9 @@ const Pricing = () => {
               <li className="flex gap-2"><Check className="w-4 h-4 text-primary mt-0.5" /> Public repos</li>
               <li className="flex gap-2"><Check className="w-4 h-4 text-primary mt-0.5" /> Private repos with your GitHub token</li>
             </ul>
-            <Button variant="outline" disabled className="mt-auto">Current plan</Button>
+            <Button variant="outline" disabled className="mt-auto">
+              {subLoading ? "Loading…" : isPro ? "Free plan" : "Current plan"}
+            </Button>
           </motion.div>
 
           {/* Pro */}
@@ -120,7 +122,9 @@ const Pricing = () => {
               <li className="flex gap-2"><Check className="w-4 h-4 text-primary mt-0.5" /> One-click re-analyze</li>
               <li className="flex gap-2"><Check className="w-4 h-4 text-primary mt-0.5" /> Cancel anytime</li>
             </ul>
-            {isPro ? (
+            {subLoading ? (
+              <Button variant="outline" disabled className="mt-auto">Loading…</Button>
+            ) : isPro ? (
               <Button variant="outline" onClick={openPortal} disabled={portalLoading} className="mt-auto">
                 {portalLoading ? "Opening…" : "Manage subscription"}
               </Button>
@@ -132,7 +136,7 @@ const Pricing = () => {
           </motion.div>
         </div>
 
-        {showCheckout && !isPro && (
+        {showCheckout && !isPro && !subLoading && (
           <motion.div
             ref={checkoutRef}
             initial={{ opacity: 0 }}
