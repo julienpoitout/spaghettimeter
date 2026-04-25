@@ -104,17 +104,25 @@ const Index = () => {
         body: { repoUrl: repoUrl.trim(), githubToken: token || undefined },
       });
 
+      // Note: supabase.functions.invoke surfaces non-2xx as `error` AND still
+      // returns the parsed JSON body via `data` (when the function responded).
+      // We must inspect `data.reason` BEFORE treating `error` as fatal so we
+      // can show user-actionable messages for quota / auth.
+      if (data && data.success === false && (data.reason === "quota" || data.reason === "auth_required")) {
+        const isAuth = data.reason === "auth_required";
+        toast({
+          title: isAuth ? "Sign in required" : "Weekly limit reached 🍝",
+          description:
+            data.error ||
+            (isAuth
+              ? "Sign in to analyze private repos."
+              : "You've used your 3 free analyses this week. Upgrade to Pro for unlimited."),
+        });
+        navigate(isAuth ? "/auth?next=/" : "/pricing");
+        return;
+      }
       if (error) throw error;
       if (!data?.success) {
-        if (data?.reason === "quota" || data?.reason === "auth_required") {
-          toast({
-            title: data.reason === "auth_required" ? "Sign in required" : "Weekly limit reached",
-            description: data.error || "Upgrade to Pro for unlimited analyses.",
-            variant: "destructive",
-          });
-          navigate(data.reason === "auth_required" ? "/auth?next=/" : "/pricing");
-          return;
-        }
         throw new Error(data?.error || "Analysis failed");
       }
 
