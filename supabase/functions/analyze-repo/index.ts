@@ -131,7 +131,7 @@ serve(async (req) => {
           error: "Sign in required to analyze private repos with a GitHub token.",
           reason: "auth_required",
         }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
