@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
 import KnowledgeManager from "@/components/KnowledgeManager";
 import RepoSelector from "@/components/RepoSelector";
-import { LogOut, LayoutDashboard, Crown, Bookmark } from "lucide-react";
+import { LogOut, LogIn, LayoutDashboard, Crown, Bookmark } from "lucide-react";
 import FeedbackForm from "@/components/FeedbackForm";
 import GitHubConnect from "@/components/GitHubConnect";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
@@ -223,6 +223,11 @@ const Index = () => {
         <Button variant="ghost" size="sm" onClick={() => setFeedbackOpen(true)} className="text-muted-foreground hover:text-primary">
           Feedback?
         </Button>
+        {!user && (
+          <Button asChild variant="outline" size="sm" className="gap-2">
+            <Link to="/auth"><LogIn className="w-4 h-4" /> Sign in</Link>
+          </Button>
+        )}
         {user && (
           <Button variant="ghost" size="sm" onClick={signOut} className="gap-2 text-muted-foreground">
             <LogOut className="w-4 h-4" /> Sign Out
