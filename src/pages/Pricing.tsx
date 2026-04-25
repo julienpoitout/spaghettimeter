@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, ArrowLeft } from "lucide-react";
@@ -19,6 +19,13 @@ const Pricing = () => {
   const { toast } = useToast();
   const [showCheckout, setShowCheckout] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
+  const checkoutRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (showCheckout && checkoutRef.current) {
+      checkoutRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showCheckout]);
 
   const handleUpgrade = () => {
     if (!user) {
@@ -127,6 +134,7 @@ const Pricing = () => {
 
         {showCheckout && !isPro && (
           <motion.div
+            ref={checkoutRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="mt-12 max-w-2xl mx-auto rounded-2xl border border-border bg-card p-6"
