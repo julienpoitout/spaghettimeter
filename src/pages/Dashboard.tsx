@@ -76,8 +76,9 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    if (authLoading) return;
     fetchAnalyses();
-  }, [user]);
+  }, [user, authLoading]);
 
   const repoGroups = useMemo(() => {
     const map = new Map<string, SavedAnalysis[]>();
