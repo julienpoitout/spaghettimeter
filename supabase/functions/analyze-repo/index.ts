@@ -131,7 +131,7 @@ serve(async (req) => {
           error: "Sign in required to analyze private repos with a GitHub token.",
           reason: "auth_required",
         }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -182,7 +182,9 @@ serve(async (req) => {
             limit: 3,
             upgradeUrl: "/pricing",
           }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          // Return 200 so supabase.functions.invoke does not throw — the
+          // client inspects `success` / `reason` to show the upgrade UI.
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
     }
