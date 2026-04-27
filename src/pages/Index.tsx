@@ -9,7 +9,8 @@ import { useAuth } from "@/hooks/useAuth";
 import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
 import KnowledgeManager from "@/components/KnowledgeManager";
 import RepoSelector from "@/components/RepoSelector";
-import { LogOut, LogIn, LayoutDashboard, Crown, Bookmark } from "lucide-react";
+import { LogOut, LogIn, LayoutDashboard, Crown, Bookmark, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import FeedbackForm from "@/components/FeedbackForm";
 import GitHubConnect from "@/components/GitHubConnect";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
@@ -18,6 +19,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 
 const Index = () => {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [repoUrl, setRepoUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -208,7 +210,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {seo}
-      <div className="absolute top-4 right-4 flex items-center gap-2">
+      {/* Desktop nav */}
+      <div className="absolute top-4 right-4 hidden md:flex items-center gap-2">
         <GitHubConnect />
         {!isPro && (
           <Button asChild variant="ghost" size="sm" className="text-primary hover:text-primary">
@@ -233,6 +236,56 @@ const Index = () => {
             <LogOut className="w-4 h-4" /> Sign Out
           </Button>
         )}
+      </div>
+
+      {/* Mobile hamburger */}
+      <div className="absolute top-4 right-4 md:hidden">
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="Open menu">
+              <Menu className="w-5 h-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-72">
+            <SheetHeader>
+              <SheetTitle className="font-display">Menu</SheetTitle>
+            </SheetHeader>
+            <div className="mt-6 flex flex-col gap-2">
+              <div className="pb-2"><GitHubConnect /></div>
+              {!isPro && (
+                <Button asChild variant="ghost" className="justify-start text-primary hover:text-primary" onClick={() => setMenuOpen(false)}>
+                  <Link to="/pricing"><Crown className="w-4 h-4 mr-2" /> Pro</Link>
+                </Button>
+              )}
+              {user && (
+                <Button asChild variant="ghost" className="justify-start text-muted-foreground hover:text-primary" onClick={() => setMenuOpen(false)}>
+                  <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" /> Dashboard</Link>
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                className="justify-start text-muted-foreground hover:text-primary"
+                onClick={() => { setMenuOpen(false); setFeedbackOpen(true); }}
+              >
+                Feedback?
+              </Button>
+              {!user && (
+                <Button asChild variant="outline" className="justify-start gap-2" onClick={() => setMenuOpen(false)}>
+                  <Link to="/auth"><LogIn className="w-4 h-4" /> Sign in</Link>
+                </Button>
+              )}
+              {user && (
+                <Button
+                  variant="ghost"
+                  className="justify-start gap-2 text-muted-foreground"
+                  onClick={() => { setMenuOpen(false); signOut(); }}
+                >
+                  <LogOut className="w-4 h-4" /> Sign Out
+                </Button>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
       <FeedbackForm open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
       <div className="container max-w-3xl mx-auto px-4 py-12 space-y-8">
