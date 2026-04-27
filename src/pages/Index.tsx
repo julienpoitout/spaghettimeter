@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import AnalysisResults, { type AnalysisResult } from "@/components/AnalysisResults";
 import KnowledgeManager from "@/components/KnowledgeManager";
 import RepoSelector from "@/components/RepoSelector";
-import { LogOut, LogIn, LayoutDashboard, Crown, Bookmark, Menu } from "lucide-react";
+import { LogOut, LogIn, LayoutDashboard, Crown, Bookmark, Menu, CreditCard } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import FeedbackForm from "@/components/FeedbackForm";
 import GitHubConnect from "@/components/GitHubConnect";
@@ -223,6 +223,11 @@ const Index = () => {
             <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-1" /> Dashboard</Link>
           </Button>
         )}
+        {user && (
+          <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+            <Link to="/billing"><CreditCard className="w-4 h-4 mr-1" /> Billing</Link>
+          </Button>
+        )}
         <Button variant="ghost" size="sm" onClick={() => setFeedbackOpen(true)} className="text-muted-foreground hover:text-primary">
           Feedback?
         </Button>
@@ -260,6 +265,11 @@ const Index = () => {
               {user && (
                 <Button asChild variant="ghost" className="justify-start text-muted-foreground hover:text-primary" onClick={() => setMenuOpen(false)}>
                   <Link to="/dashboard"><LayoutDashboard className="w-4 h-4 mr-2" /> Dashboard</Link>
+                </Button>
+              )}
+              {user && (
+                <Button asChild variant="ghost" className="justify-start text-muted-foreground hover:text-primary" onClick={() => setMenuOpen(false)}>
+                  <Link to="/billing"><CreditCard className="w-4 h-4 mr-2" /> Billing</Link>
                 </Button>
               )}
               <Button
