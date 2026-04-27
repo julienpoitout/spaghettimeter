@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, RefreshCw, Trash2, Crown, CreditCard, Receipt, ArrowUpDown, ExternalLink } from "lucide-react";
+import { ArrowLeft, RefreshCw, Trash2, Crown, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,7 +20,6 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useToast } from "@/hooks/use-toast";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
 import Seo from "@/components/Seo";
-import { getStripeEnvironment } from "@/lib/stripe";
 
 interface SavedAnalysis {
   id: string;
@@ -43,7 +42,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [reanalyzing, setReanalyzing] = useState<string | null>(null);
   const [compareIds, setCompareIds] = useState<{ a: string | null; b: string | null }>({ a: null, b: null });
-  const [portalLoading, setPortalLoading] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth?next=/dashboard");
@@ -54,28 +52,6 @@ const Dashboard = () => {
       toast({ title: "Welcome to Pro 🎉", description: "Your subscription is active." });
     }
   }, [searchParams, toast]);
-
-  const openBillingPortal = async () => {
-    setPortalLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-portal-session", {
-        body: {
-          environment: getStripeEnvironment(),
-          returnUrl: `${window.location.origin}/dashboard`,
-        },
-      });
-      if (error || !data?.url) throw new Error(error?.message || "Failed to open billing portal");
-      window.open(data.url, "_blank");
-    } catch (e: any) {
-      toast({
-        title: "Could not open billing portal",
-        description: e.message,
-        variant: "destructive",
-      });
-    } finally {
-      setPortalLoading(false);
-    }
-  };
 
   const fetchAnalyses = async () => {
     if (!user) {
