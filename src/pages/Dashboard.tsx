@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, RefreshCw, Trash2, Crown, CreditCard, Receipt, ArrowUpDown, ExternalLink } from "lucide-react";
+import { ArrowLeft, RefreshCw, Trash2, Crown, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,7 +20,6 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useToast } from "@/hooks/use-toast";
 import { useGitHubToken } from "@/hooks/useGitHubToken";
 import Seo from "@/components/Seo";
-import { getStripeEnvironment } from "@/lib/stripe";
 
 interface SavedAnalysis {
   id: string;
@@ -43,7 +42,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [reanalyzing, setReanalyzing] = useState<string | null>(null);
   const [compareIds, setCompareIds] = useState<{ a: string | null; b: string | null }>({ a: null, b: null });
-  const [portalLoading, setPortalLoading] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth?next=/dashboard");
@@ -54,28 +52,6 @@ const Dashboard = () => {
       toast({ title: "Welcome to Pro 🎉", description: "Your subscription is active." });
     }
   }, [searchParams, toast]);
-
-  const openBillingPortal = async () => {
-    setPortalLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-portal-session", {
-        body: {
-          environment: getStripeEnvironment(),
-          returnUrl: `${window.location.origin}/dashboard`,
-        },
-      });
-      if (error || !data?.url) throw new Error(error?.message || "Failed to open billing portal");
-      window.open(data.url, "_blank");
-    } catch (e: any) {
-      toast({
-        title: "Could not open billing portal",
-        description: e.message,
-        variant: "destructive",
-      });
-    } finally {
-      setPortalLoading(false);
-    }
-  };
 
   const fetchAnalyses = async () => {
     if (!user) {
@@ -208,57 +184,20 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Manage subscription */}
-        <section className="rounded-2xl border border-border bg-card p-6 space-y-4">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div className="space-y-1">
-              <h2 className="text-xl font-display font-bold flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-primary" />
-                Manage your subscription
-              </h2>
+        {/* Manage subscription link */}
+        <section className="rounded-2xl border border-border bg-card p-5 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <CreditCard className="w-5 h-5 text-primary" />
+            <div>
+              <p className="font-display font-semibold">Billing & subscription</p>
               <p className="text-sm text-muted-foreground font-body">
-                {isPro
-                  ? "You're on the Pro plan. Use the billing portal to make changes."
-                  : "You're on the Free plan. Upgrade to Pro for unlimited analyses, saves, and history."}
+                {isPro ? "Manage your plan, payment method, and invoices." : "Upgrade or view plan options."}
               </p>
             </div>
-            {isPro ? (
-              <Button variant="spaghettify" onClick={openBillingPortal} disabled={portalLoading} className="gap-2">
-                Open billing portal
-                <ExternalLink className="w-4 h-4" />
-              </Button>
-            ) : (
-              <Button variant="spaghettify" onClick={() => navigate("/pricing")} className="gap-2">
-                <Crown className="w-4 h-4" /> Upgrade to Pro
-              </Button>
-            )}
           </div>
-
-          {isPro && (
-            <div className="grid sm:grid-cols-3 gap-3 pt-2">
-              <div className="rounded-lg border border-border bg-background p-4 flex items-start gap-3">
-                <ArrowUpDown className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-display font-semibold text-sm">Upgrade or downgrade</p>
-                  <p className="text-xs text-muted-foreground font-body mt-1">Switch plans or cancel anytime.</p>
-                </div>
-              </div>
-              <div className="rounded-lg border border-border bg-background p-4 flex items-start gap-3">
-                <Receipt className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-display font-semibold text-sm">Download receipts</p>
-                  <p className="text-xs text-muted-foreground font-body mt-1">Access invoices and payment history.</p>
-                </div>
-              </div>
-              <div className="rounded-lg border border-border bg-background p-4 flex items-start gap-3">
-                <CreditCard className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-display font-semibold text-sm">Update payment</p>
-                  <p className="text-xs text-muted-foreground font-body mt-1">Change card or billing details.</p>
-                </div>
-              </div>
-            </div>
-          )}
+          <Button variant="outline" onClick={() => navigate("/billing")}>
+            Manage subscription
+          </Button>
         </section>
 
         {/* Score over time per repo */}
