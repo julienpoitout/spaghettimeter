@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -14,22 +14,34 @@ const STORAGE_KEY = "gh_token";
  *   browser does not inherit the previous user's token.
  */
 export function useGitHubToken() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [token, setTokenState] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem(STORAGE_KEY);
   });
+  // Track previous user id so we only wipe the cache on a real sign-out
+  // transition (had user → no user), not on the initial render where `user`
+  // is still null because auth hasn't resolved yet.
+  const prevUserIdRef = useRef<string | null>(null);
 
   // Sync with DB whenever the auth user changes.
   useEffect(() => {
+    // Wait for auth to resolve before doing anything — otherwise we'd wipe the
+    // localStorage cache on every page load while auth is still hydrating.
+    if (authLoading) return;
+
     let cancelled = false;
 
     if (!user) {
-      // Drop the cached token so the next account on this browser starts clean.
-      localStorage.removeItem(STORAGE_KEY);
-      setTokenState(null);
+      // Only clear the cache if we previously had a user (real sign-out).
+      if (prevUserIdRef.current) {
+        localStorage.removeItem(STORAGE_KEY);
+        setTokenState(null);
+      }
+      prevUserIdRef.current = null;
       return;
     }
+    prevUserIdRef.current = user.id;
 
     (async () => {
       const { data, error } = await supabase
@@ -57,7 +69,7 @@ export function useGitHubToken() {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, authLoading]);
 
   // Cross-tab sync via the storage event.
   useEffect(() => {
