@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, RefreshCw, Trash2, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   LineChart,
   Line,
@@ -141,6 +142,26 @@ const Dashboard = () => {
   const compareA = analyses.find((a) => a.id === compareIds.a);
   const compareB = analyses.find((a) => a.id === compareIds.b);
 
+  // While auth is resolving (or we know there's no user and we're about to
+  // redirect), show a centered branded loader instead of the dashboard chrome
+  // to avoid a flash of empty UI.
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <motion.div
+            className="text-5xl"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
+          >
+            🍝
+          </motion.div>
+          <p className="font-display text-muted-foreground">Loading your dashboard…</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Seo title="Your Dashboard — SpaghettiMeter" description="Saved code-quality analyses, score-over-time charts and side-by-side comparisons." canonical="https://spaghettimeter.com/dashboard" />
@@ -247,45 +268,81 @@ const Dashboard = () => {
         {/* History list */}
         <section className="space-y-3">
           <h2 className="text-xl font-display font-bold">History</h2>
-          {loading ? (
-            <p className="text-muted-foreground">Loading…</p>
-          ) : analyses.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border p-10 text-center">
-              <p className="text-muted-foreground font-body">No saved analyses yet.</p>
-              <Button variant="spaghettify" onClick={() => navigate("/")} className="mt-4">
-                Run your first analysis
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {analyses.map((a) => (
-                <motion.div
-                  key={a.id}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="rounded-xl border border-border bg-card p-4 flex items-center justify-between gap-4 flex-wrap"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-display font-semibold truncate">{a.repo_url.replace("https://github.com/", "")}</p>
-                    <p className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString()}</p>
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div
+                key="skeleton"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="space-y-2"
+              >
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-xl border border-border bg-card p-4 flex items-center justify-between gap-4 flex-wrap"
+                  >
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <Skeleton className="h-5 w-2/3" />
+                      <Skeleton className="h-3 w-1/3" />
+                    </div>
+                    <Skeleton className="h-8 w-16" />
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-9 w-20" />
+                      <Skeleton className="h-9 w-9" />
+                    </div>
                   </div>
-                  <div className="text-2xl font-display font-bold text-primary">
-                    {Number(a.score).toFixed(1)}
-                    <span className="text-sm text-muted-foreground">/10</span>
+                ))}
+              </motion.div>
+            ) : analyses.length === 0 ? (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.15 }}
+                className="rounded-xl border border-dashed border-border p-10 text-center"
+              >
+                <p className="text-muted-foreground font-body">No saved analyses yet.</p>
+                <Button variant="spaghettify" onClick={() => navigate("/")} className="mt-4">
+                  Run your first analysis
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="list"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.15 }}
+                className="space-y-2"
+              >
+                {analyses.map((a) => (
+                  <div
+                    key={a.id}
+                    className="rounded-xl border border-border bg-card p-4 flex items-center justify-between gap-4 flex-wrap"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="font-display font-semibold truncate">{a.repo_url.replace("https://github.com/", "")}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleString()}</p>
+                    </div>
+                    <div className="text-2xl font-display font-bold text-primary">
+                      {Number(a.score).toFixed(1)}
+                      <span className="text-sm text-muted-foreground">/10</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" variant="outline" onClick={() => handleReanalyze(a)} disabled={reanalyzing === a.id}>
+                        <RefreshCw className={`w-4 h-4 mr-1 ${reanalyzing === a.id ? "animate-spin" : ""}`} />
+                        Re-run
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => handleDelete(a.id)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button size="sm" variant="outline" onClick={() => handleReanalyze(a)} disabled={reanalyzing === a.id}>
-                      <RefreshCw className={`w-4 h-4 mr-1 ${reanalyzing === a.id ? "animate-spin" : ""}`} />
-                      Re-run
-                    </Button>
-                    <Button size="sm" variant="ghost" onClick={() => handleDelete(a.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
       </div>
     </div>
