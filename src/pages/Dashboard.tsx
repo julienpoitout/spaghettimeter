@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, RefreshCw, Trash2, Crown, CreditCard } from "lucide-react";
+import { ArrowLeft, RefreshCw, Trash2, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -183,22 +183,6 @@ const Dashboard = () => {
             {isPro ? "Unlimited saves — track code quality across all your repos." : "Free plan: 1 saved analysis."}
           </p>
         </div>
-
-        {/* Manage subscription link */}
-        <section className="rounded-2xl border border-border bg-card p-5 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <CreditCard className="w-5 h-5 text-primary" />
-            <div>
-              <p className="font-display font-semibold">Billing & subscription</p>
-              <p className="text-sm text-muted-foreground font-body">
-                {isPro ? "Manage your plan, payment method, and invoices." : "Upgrade or view plan options."}
-              </p>
-            </div>
-          </div>
-          <Button variant="outline" onClick={() => navigate("/billing")}>
-            Manage subscription
-          </Button>
-        </section>
 
         {/* Score over time per repo */}
         {repoGroups.size > 0 && (
