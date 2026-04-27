@@ -138,7 +138,7 @@ const GitHubConnect = () => {
               <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 mb-4 flex gap-2">
                 <ShieldAlert className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
                 <p className="text-xs font-body text-muted-foreground">
-                  Your token is stored <strong>only in your browser</strong> and sent to our analysis function over HTTPS. It is never saved in our database.
+                  Your token is <strong>securely saved to your account</strong> so you don't have to reconnect each time you sign in. It's only readable by you and sent to our analysis function over HTTPS. Disconnect any time to remove it.
                 </p>
               </div>
 
