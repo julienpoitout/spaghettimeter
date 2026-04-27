@@ -33,7 +33,7 @@ interface SavedAnalysis {
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
-  const { isPro } = useSubscription();
+  const { isPro, isLoading: subLoading } = useSubscription();
   const { token } = useGitHubToken();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -170,7 +170,7 @@ const Dashboard = () => {
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
             <ArrowLeft className="w-4 h-4" /> Back to scanner
           </Link>
-          {!isPro && (
+          {!subLoading && !isPro && (
             <Button variant="spaghettify" size="sm" onClick={() => navigate("/pricing")}>
               <Crown className="w-4 h-4 mr-1" /> Upgrade to Pro
             </Button>
