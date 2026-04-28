@@ -68,8 +68,8 @@ const Billing = () => {
         canonical="https://spaghettimeter.com/billing"
       />
       <div className="container max-w-4xl mx-auto px-4 py-10 space-y-8">
-        <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
-          <ArrowLeft className="w-4 h-4" /> Back to dashboard
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
+          <ArrowLeft className="w-4 h-4" /> Back
         </Link>
 
         <div>
