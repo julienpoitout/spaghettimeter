@@ -319,7 +319,16 @@ const Dashboard = () => {
                 {analyses.map((a) => (
                   <div
                     key={a.id}
-                    className="rounded-xl border border-border bg-card p-4 flex items-center justify-between gap-4 flex-wrap"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => navigate(`/analysis/${a.id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        navigate(`/analysis/${a.id}`);
+                      }
+                    }}
+                    className="rounded-xl border border-border bg-card p-4 flex items-center justify-between gap-4 flex-wrap cursor-pointer hover:border-primary/40 hover:bg-card/80 transition-colors"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="font-display font-semibold truncate">{a.repo_url.replace("https://github.com/", "")}</p>
@@ -329,7 +338,7 @@ const Dashboard = () => {
                       {Number(a.score).toFixed(1)}
                       <span className="text-sm text-muted-foreground">/10</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                       <Button size="sm" variant="outline" onClick={() => handleReanalyze(a)} disabled={reanalyzing === a.id}>
                         <RefreshCw className={`w-4 h-4 mr-1 ${reanalyzing === a.id ? "animate-spin" : ""}`} />
                         Re-run
