@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# Spaghetti Meter
 
 TODO: Document your project here
