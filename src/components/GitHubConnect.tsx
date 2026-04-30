@@ -38,6 +38,8 @@ const GitHubConnect = () => {
       setInput("");
       setOpen(false);
       toast({ title: `Connected as ${user.login} 🎉` });
+      // Reload so dependent components (e.g. RepoSelector) pick up the new token
+      setTimeout(() => window.location.reload(), 600);
     } catch (err: any) {
       toast({ title: "Connection failed", description: err.message, variant: "destructive" });
     } finally {
