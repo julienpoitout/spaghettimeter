@@ -188,12 +188,15 @@ const Index = () => {
       if (error) throw error;
       if (!data?.success) {
         if (data?.reason === "save_limit") {
-          toast({
-            title: "Save limit reached",
-            description: "Free plan allows 1 saved analysis. Upgrade to Pro for unlimited saves.",
-            variant: "destructive",
+          sonnerToast("🍝 Free plan limit reached", {
+            description:
+              "You can save 1 analysis on the Free plan. Upgrade to Pro for unlimited saves & scans.",
+            duration: 10000,
+            action: {
+              label: "Upgrade to Pro",
+              onClick: () => navigate("/pricing"),
+            },
           });
-          navigate("/pricing");
           return;
         }
         throw new Error(data?.error || "Save failed");
