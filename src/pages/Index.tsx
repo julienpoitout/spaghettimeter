@@ -482,7 +482,7 @@ const Index = () => {
             <div>
               <h3 className="font-display font-semibold text-foreground">Is SpaghettiMeter free?</h3>
               <p className="text-muted-foreground font-body mt-1">
-                Yes — SpaghettiMeter is free to use for both public and private GitHub repositories.
+                Yes — SpaghettiMeter is free to use for up to 3 repositories per week (both public and private). Upgrade to Pro for unlimited spaghettiness scans!
               </p>
             </div>
             <div>
