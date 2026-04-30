@@ -16,12 +16,10 @@ const ShareResults = ({ score, repoUrl, shareId }: ShareResultsProps) => {
 
   const repoName = repoUrl.replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "");
   const shareText = `🍝 My repo "${repoName}" scored ${score.toFixed(1)}/10 on SpaghettiMeter! How tangled is YOUR code?`;
-  const shareUrl = shareId
-    ? `${window.location.origin}/s/${shareId}`
-    : window.location.origin;
+  const shareUrl = shareId ? `${window.location.origin}/s/${shareId}` : null;
   const fullText = `${shareText}\n${shareUrl}`;
   const encodedText = encodeURIComponent(shareText);
-  const encodedUrl = encodeURIComponent(shareUrl);
+  const encodedUrl = encodeURIComponent(shareUrl ?? "");
 
   const channels = [
     {
@@ -59,9 +57,13 @@ const ShareResults = ({ score, repoUrl, shareId }: ShareResultsProps) => {
   ];
 
   const copyLink = async () => {
+    if (!shareUrl) return;
     await navigator.clipboard.writeText(shareUrl);
     toast({ title: "Link copied to clipboard! 📋" });
   };
+
+  // Don't render share UI until we have a shareable link to the analysis
+  if (!shareUrl) return null;
 
   return (
     <motion.div
