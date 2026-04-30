@@ -47,7 +47,7 @@ const Index = () => {
             name: "Is SpaghettiMeter free?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Yes — SpaghettiMeter is free to use for both public and private GitHub repositories.",
+            text: "Yes — SpaghettiMeter is free to use for up to 3 repositories per week (both public and private). Upgrade to Pro for unlimited spaghettiness scans!",
             },
           },
           {
