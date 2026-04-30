@@ -27,7 +27,7 @@ const KnowledgeManager = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const fetchItems = async () => {
@@ -107,8 +107,8 @@ const KnowledgeManager = () => {
     fetchItems();
   };
 
-  // Non-admin users see read-only count
-  if (!isAdmin) {
+  // Restrict Knowledge Base visibility to a single allowlisted email
+  if (user?.email?.toLowerCase() !== "julienpoitout@gmail.com") {
     return null;
   }
 
