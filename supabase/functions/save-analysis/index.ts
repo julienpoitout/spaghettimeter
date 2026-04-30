@@ -58,11 +58,12 @@ Deno.serve(async (req) => {
       if ((count ?? 0) >= 1) {
         return new Response(
           JSON.stringify({
+            success: false,
             error: "Free plan allows 1 saved analysis. Upgrade to Pro for unlimited saves.",
             reason: "save_limit",
             upgradeUrl: "/pricing",
           }),
-          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
     }
