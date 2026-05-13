@@ -82,7 +82,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
           <Card className="p-6 bg-card">
             <h2 className="font-display text-lg font-semibold mb-3 text-foreground">
               🍝 The Verdict
-            </h3>
+            </h2>
             <p className="text-muted-foreground font-body leading-relaxed">{summary}</p>
           </Card>
         </motion.div>
@@ -98,7 +98,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
           <Card className="p-6 bg-card">
             <h2 className="font-display text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5" /> Breakdown by Category
-            </h3>
+            </h2>
             <div className="space-y-4">
               {breakdown.map((item, i) => {
                 const style = RATING_STYLES[item.rating] || RATING_STYLES.mediocre;
@@ -113,7 +113,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <h3 className="font-display font-semibold text-foreground text-sm">
                         {item.category}
-                      </h4>
+                      </h3>
                       <Badge className={`${style.color} border font-body text-xs capitalize`} variant="outline">
                         {style.emoji} {item.rating}
                       </Badge>
@@ -139,7 +139,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
           <Card className="p-6 bg-card">
             <h2 className="font-display text-lg font-semibold mb-4 text-foreground">
               🧹 How to De-Spaghettify
-            </h3>
+            </h2>
             <ul className="space-y-3">
               {suggestions.map((s, i) => {
                 const ps = PRIORITY_STYLES[s.priority] || PRIORITY_STYLES.medium;
@@ -158,7 +158,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
                         <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
                           <h3 className="font-display font-semibold text-foreground text-sm">
                             {s.title}
-                          </h4>
+                          </h3>
                           <Badge className={`${ps.className} border font-body text-xs`} variant="outline">
                             {ps.label}
                           </Badge>
