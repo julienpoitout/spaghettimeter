@@ -99,6 +99,9 @@ const AnalysisDetail = () => {
         <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
           <ArrowLeft className="w-4 h-4" /> Back to dashboard
         </Link>
+        <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground break-words">
+          {analysis.repo_url.replace("https://github.com/", "")}
+        </h1>
         <p className="text-xs text-muted-foreground font-body">
           Saved {new Date(analysis.created_at).toLocaleString()}
         </p>
