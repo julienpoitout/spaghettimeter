@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import Seo from "@/components/Seo";
 
 type Status =
   | "validating"
@@ -78,6 +79,12 @@ const Unsubscribe = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <Seo
+        title="Unsubscribe — SpaghettiMeter"
+        description="Manage your SpaghettiMeter email preferences and unsubscribe from future product updates and notifications in one click."
+        canonical="https://spaghettimeter.com/unsubscribe"
+        noindex
+      />
       <div className="max-w-md w-full bg-card border border-border rounded-2xl p-8 shadow-sm text-center space-y-4">
         <div className="text-5xl">🍝</div>
         <h1 className="text-2xl font-display font-bold text-foreground">
