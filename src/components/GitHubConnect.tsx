@@ -96,7 +96,7 @@ const GitHubConnect = () => {
                 <h2 className="text-xl font-display font-bold text-foreground flex items-center gap-2">
                   <Github className="w-5 h-5" /> Connect GitHub
                 </h2>
-                <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+                <Button variant="ghost" size="icon" onClick={() => setOpen(false)} aria-label="Close dialog">
                   <X className="w-4 h-4" />
                 </Button>
               </div>
