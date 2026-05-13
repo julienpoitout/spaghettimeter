@@ -13,6 +13,7 @@ import Pricing from "./pages/Pricing.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Billing from "./pages/Billing.tsx";
 import AnalysisDetail from "./pages/AnalysisDetail.tsx";
+import LearnArticle from "./pages/LearnArticle.tsx";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/billing" element={<Billing />} />
             <Route path="/analysis/:id" element={<AnalysisDetail />} />
+            <Route path="/learn/:slug" element={<LearnArticle />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
