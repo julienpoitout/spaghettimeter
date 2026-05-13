@@ -59,7 +59,7 @@ const Auth = () => {
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🍝</div>
           <h1 className="text-2xl font-display font-bold text-foreground">
-            Spaghetti<span className="text-primary">Meter</span>
+            Sign in to SpaghettiMeter
           </h1>
           <p className="text-muted-foreground font-body text-sm mt-1">
             {isLogin ? "Welcome back, chef!" : "Join the kitchen"}
@@ -74,6 +74,7 @@ const Auth = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              aria-label="Email address"
             />
             <Input
               type="password"
@@ -82,9 +83,15 @@ const Auth = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
+              aria-label="Password"
             />
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "..." : isLogin ? "Sign In" : "Sign Up"}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading}
+              aria-label={loading ? "Submitting" : isLogin ? "Sign In" : "Sign Up"}
+            >
+              {loading ? "Submitting…" : isLogin ? "Sign In" : "Sign Up"}
             </Button>
           </form>
 

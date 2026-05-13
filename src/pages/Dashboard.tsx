@@ -343,7 +343,7 @@ const Dashboard = () => {
                         <RefreshCw className={`w-4 h-4 mr-1 ${reanalyzing === a.id ? "animate-spin" : ""}`} />
                         Re-run
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => handleDelete(a.id)}>
+                      <Button size="sm" variant="ghost" onClick={() => handleDelete(a.id)} aria-label="Delete analysis">
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>

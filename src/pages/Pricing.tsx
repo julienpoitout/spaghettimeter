@@ -109,7 +109,7 @@ const Pricing = () => {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl border border-border bg-card p-8 flex flex-col"
           >
-            <h3 className="text-2xl font-display font-bold">Free</h3>
+            <h2 className="text-2xl font-display font-bold">Free</h2>
             <p className="text-muted-foreground font-body text-sm mt-1">For casual scans</p>
             <p className="text-4xl font-display font-bold mt-4">$0<span className="text-base font-body text-muted-foreground">/forever</span></p>
             <ul className="space-y-3 mt-6 mb-8 text-sm font-body">
@@ -133,7 +133,7 @@ const Pricing = () => {
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-display font-bold px-3 py-1 rounded-full">
               MOST POPULAR
             </div>
-            <h3 className="text-2xl font-display font-bold">Pro</h3>
+            <h2 className="text-2xl font-display font-bold">Pro</h2>
             <p className="text-muted-foreground font-body text-sm mt-1">For serious developers</p>
             <p className="text-4xl font-display font-bold mt-4">$2.99<span className="text-base font-body text-muted-foreground">/month</span></p>
             <ul className="space-y-3 mt-6 mb-8 text-sm font-body">
@@ -165,7 +165,7 @@ const Pricing = () => {
             animate={{ opacity: 1 }}
             className="mt-12 max-w-2xl mx-auto rounded-2xl border border-border bg-card p-6"
           >
-            <h3 className="font-display font-bold text-xl mb-4">Complete your subscription</h3>
+            <h2 className="font-display font-bold text-xl mb-4">Complete your subscription</h2>
             <StripeEmbeddedCheckoutForm priceId="pro_monthly" />
           </motion.div>
         )}

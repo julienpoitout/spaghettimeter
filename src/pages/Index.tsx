@@ -318,11 +318,11 @@ const Index = () => {
             🍝
           </motion.div>
           <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground">
-            Spaghetti<span className="text-primary">Meter</span>
+            SpaghettiMeter — Measure How Tangled Your Code Is
           </h1>
-          <h2 className="text-muted-foreground font-body text-lg max-w-md mx-auto font-normal">
+          <p className="text-muted-foreground font-body text-lg max-w-md mx-auto font-normal">
             Spot spaghetti code in any GitHub repo. Paste a URL and get an instant AI-powered code-quality score.
-          </h2>
+          </p>
           {user && !isPro && remainingAnalyses !== null && (
             <p className="text-xs text-muted-foreground font-body">
               {remainingAnalyses} of 3 free analyses left this week ·{" "}
@@ -350,6 +350,7 @@ const Index = () => {
             onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
             className="flex-1 h-12 text-base font-body"
             disabled={isLoading}
+            aria-label="GitHub repository URL"
           />
           <Button
             variant="spaghettify"
@@ -357,6 +358,7 @@ const Index = () => {
             onClick={handleAnalyze}
             disabled={isLoading}
             className="h-12 px-8"
+            aria-label={isLoading ? "Analyzing repository" : "Analyze repository"}
           >
             {isLoading ? (
               <motion.span
