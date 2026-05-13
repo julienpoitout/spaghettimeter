@@ -99,7 +99,7 @@ const FeedbackForm = ({ open, onClose }: FeedbackFormProps) => {
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-display font-bold text-foreground">Send Feedback</h2>
-              <Button variant="ghost" size="icon" onClick={onClose}>
+              <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close feedback form">
                 <X className="w-4 h-4" />
               </Button>
             </div>
