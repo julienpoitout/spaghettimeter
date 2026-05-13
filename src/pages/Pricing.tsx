@@ -59,6 +59,28 @@ const Pricing = () => {
         title="Pricing — SpaghettiMeter Pro"
         description="Unlock unlimited GitHub repository analyses, save your scans to a personal dashboard, and track code quality over time. Just $2.99/month."
         canonical="https://spaghettimeter.com/pricing"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: "SpaghettiMeter Pro",
+          description: "Unlimited GitHub repository code-quality analyses, unlimited saved analyses, score-over-time charts, side-by-side comparisons and one-click re-analyze.",
+          brand: { "@type": "Brand", name: "SpaghettiMeter" },
+          offers: {
+            "@type": "Offer",
+            price: "2.99",
+            priceCurrency: "USD",
+            url: "https://spaghettimeter.com/pricing",
+            availability: "https://schema.org/InStock",
+            priceSpecification: {
+              "@type": "UnitPriceSpecification",
+              price: "2.99",
+              priceCurrency: "USD",
+              billingDuration: 1,
+              billingIncrement: 1,
+              unitCode: "MON",
+            },
+          },
+        }}
       />
       <PaymentTestModeBanner />
       <div className="container max-w-5xl mx-auto px-4 py-10">

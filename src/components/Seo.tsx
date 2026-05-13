@@ -5,6 +5,7 @@ interface SeoProps {
   description: string;
   canonical?: string;
   ogImage?: string;
+  ogType?: string;
   jsonLd?: Record<string, unknown>;
   noindex?: boolean;
 }
@@ -30,7 +31,7 @@ const setLink = (rel: string, href: string) => {
   el.setAttribute("href", href);
 };
 
-const Seo = ({ title, description, canonical, ogImage, jsonLd, noindex }: SeoProps) => {
+const Seo = ({ title, description, canonical, ogImage, ogType, jsonLd, noindex }: SeoProps) => {
   useEffect(() => {
     document.title = title;
     setMeta('meta[name="description"]', "content", description);
@@ -46,6 +47,7 @@ const Seo = ({ title, description, canonical, ogImage, jsonLd, noindex }: SeoPro
       setMeta('meta[property="og:image"]', "content", ogImage);
       setMeta('meta[name="twitter:image"]', "content", ogImage);
     }
+    setMeta('meta[property="og:type"]', "content", ogType || "website");
 
     const robotsId = "page-robots";
     let robots = document.head.querySelector<HTMLMetaElement>(`meta[name="robots"]#${robotsId}`);
@@ -74,7 +76,7 @@ const Seo = ({ title, description, canonical, ogImage, jsonLd, noindex }: SeoPro
     } else if (script) {
       script.remove();
     }
-  }, [title, description, canonical, ogImage, jsonLd, noindex]);
+  }, [title, description, canonical, ogImage, ogType, jsonLd, noindex]);
 
   return null;
 };

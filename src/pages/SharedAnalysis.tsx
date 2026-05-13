@@ -59,12 +59,17 @@ const SharedAnalysis = () => {
           title={`${repoUrl.replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "")} scored ${result.score.toFixed(1)}/10 on SpaghettiMeter`}
           description={`See the AI-powered spaghetti-code analysis of ${repoUrl.replace(/^https?:\/\/github\.com\//, "")} — score ${result.score.toFixed(1)}/10 with refactoring suggestions.`}
           canonical={`https://spaghettimeter.com/s/${id}`}
+          ogType="article"
+          ogImage="https://spaghettimeter.com/og-image.png"
           jsonLd={{
             "@context": "https://schema.org",
             "@type": "Article",
             headline: `${repoUrl.replace(/^https?:\/\/github\.com\//, "")} scored ${result.score.toFixed(1)}/10 on SpaghettiMeter`,
             about: repoUrl,
             url: `https://spaghettimeter.com/s/${id}`,
+            image: "https://spaghettimeter.com/og-image.png",
+            datePublished: new Date().toISOString(),
+            author: { "@type": "Organization", name: "SpaghettiMeter", url: "https://spaghettimeter.com" },
             publisher: { "@type": "Organization", name: "SpaghettiMeter" },
           }}
         />

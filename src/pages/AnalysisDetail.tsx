@@ -91,7 +91,9 @@ const AnalysisDetail = () => {
     <div className="min-h-screen bg-background">
       <Seo
         title={`Analysis — ${analysis.repo_url.replace("https://github.com/", "")}`}
-        description="Saved code-quality analysis result."
+        description={`Your saved SpaghettiMeter analysis for ${analysis.repo_url.replace("https://github.com/", "")} — score ${Number(analysis.score).toFixed(1)}/10 with breakdown and refactoring suggestions.`}
+        canonical={`https://spaghettimeter.com/analysis/${analysis.id}`}
+        noindex
       />
       <div className="container max-w-3xl mx-auto px-4 py-10 space-y-6">
         <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
