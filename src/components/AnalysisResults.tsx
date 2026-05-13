@@ -80,7 +80,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
           transition={{ delay: 1.4 }}
         >
           <Card className="p-6 bg-card">
-            <h3 className="font-display text-lg font-semibold mb-3 text-foreground">
+            <h2 className="font-display text-lg font-semibold mb-3 text-foreground">
               🍝 The Verdict
             </h3>
             <p className="text-muted-foreground font-body leading-relaxed">{summary}</p>
@@ -96,7 +96,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
           transition={{ delay: 1.55 }}
         >
           <Card className="p-6 bg-card">
-            <h3 className="font-display text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
               <ListChecks className="w-5 h-5" /> Breakdown by Category
             </h3>
             <div className="space-y-4">
@@ -111,7 +111,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
                     transition={{ delay: 1.7 + i * 0.08 }}
                   >
                     <div className="flex items-center justify-between gap-2 mb-2">
-                      <h4 className="font-display font-semibold text-foreground text-sm">
+                      <h3 className="font-display font-semibold text-foreground text-sm">
                         {item.category}
                       </h4>
                       <Badge className={`${style.color} border font-body text-xs capitalize`} variant="outline">
@@ -137,7 +137,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
           transition={{ delay: 1.7 }}
         >
           <Card className="p-6 bg-card">
-            <h3 className="font-display text-lg font-semibold mb-4 text-foreground">
+            <h2 className="font-display text-lg font-semibold mb-4 text-foreground">
               🧹 How to De-Spaghettify
             </h3>
             <ul className="space-y-3">
@@ -156,7 +156,7 @@ const AnalysisResults = ({ result, repoUrl, shareId }: AnalysisResultsProps) => 
                       <Icon className="w-4 h-4 mt-0.5 shrink-0 text-muted-foreground" />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
-                          <h4 className="font-display font-semibold text-foreground text-sm">
+                          <h3 className="font-display font-semibold text-foreground text-sm">
                             {s.title}
                           </h4>
                           <Badge className={`${ps.className} border font-body text-xs`} variant="outline">
