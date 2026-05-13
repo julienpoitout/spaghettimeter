@@ -103,6 +103,7 @@ const RepoSelector = ({ onSelect }: RepoSelectorProps) => {
               onChange={(e) => setUsername(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && fetchRepos()}
               className="flex-1 h-10 text-sm font-body"
+              aria-label="GitHub username"
             />
             <Button
               variant="outline"
