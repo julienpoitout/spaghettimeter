@@ -1,0 +1,16 @@
+# SpaghettiMeter
+
+> AI-powered code quality scanner that rates GitHub repositories on a 0–10 spaghetti scale and suggests refactors.
+
+SpaghettiMeter analyzes any public or private GitHub repository and returns an instant "spaghettiness" score from 0.1 (clean pasta 🍝) to 10 (mamma mia 🤌💥), with concrete refactoring suggestions. Free for up to 3 repos per week; Pro unlocks unlimited scans, saved history and score-over-time charts.
+
+## Pages
+
+- [Home](/): Paste a GitHub repo URL and get an instant code-quality analysis.
+- [Pricing](/pricing): Free plan (3 scans/week, 1 saved analysis) vs. Pro at $2.99/month (unlimited scans + saves).
+- [Sign in](/auth): Create an account or log in to save analyses and connect a GitHub token.
+
+## Optional
+
+- [Dashboard](/dashboard): Saved analyses for signed-in users.
+- [Shared analysis](/s/:id): Public, shareable view of a single analysis result.
