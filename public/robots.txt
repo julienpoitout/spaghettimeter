@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://spaghettimeter.com/sitemap.xml
 Sitemap: https://dfaweogblkyohlgcqogc.supabase.co/functions/v1/sitemap
