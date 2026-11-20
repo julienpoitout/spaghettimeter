@@ -148,6 +148,7 @@ const Dashboard = () => {
   if (authLoading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
+        <Seo title="Your Dashboard — SpaghettiMeter" description="Your private saved analyses." noindex />
         <div className="text-center space-y-3">
           <motion.div
             className="text-5xl"
@@ -164,7 +165,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Seo title="Your Dashboard — SpaghettiMeter" description="Saved code-quality analyses, score-over-time charts and side-by-side comparisons." canonical="https://spaghettimeter.com/dashboard" />
+      <Seo title="Your Dashboard — SpaghettiMeter" description="Saved code-quality analyses, score-over-time charts and side-by-side comparisons." canonical="https://spaghettimeter.com/dashboard" noindex />
       <div className="container max-w-6xl mx-auto px-4 py-10 space-y-10">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">

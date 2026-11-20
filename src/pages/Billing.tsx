@@ -46,6 +46,7 @@ const Billing = () => {
   if (authLoading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
+        <Seo title="Billing & Subscription — SpaghettiMeter" description="Manage your private billing details." noindex />
         <div className="text-center space-y-3">
           <motion.div
             className="text-5xl"
@@ -66,6 +67,7 @@ const Billing = () => {
         title="Billing & Subscription — SpaghettiMeter"
         description="Manage your SpaghettiMeter subscription, download receipts and update payment methods."
         canonical="https://spaghettimeter.com/billing"
+        noindex
       />
       <div className="container max-w-4xl mx-auto px-4 py-10 space-y-8">
         <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">

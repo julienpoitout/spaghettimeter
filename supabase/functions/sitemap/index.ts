@@ -1,6 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-
-const SITE_URL = "https://spaghettimeter.com";
+import { buildSitemap, loadAllSharedAnalyses } from "./sitemap.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,43 +12,20 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-
-    const { data, error } = await supabase
-      .from("shared_analyses")
-      .select("id, created_at")
-      .order("created_at", { ascending: false })
-      .limit(5000);
-
-    if (error) throw error;
-
-    const staticUrls = [
-      { loc: `${SITE_URL}/`, priority: "1.0", changefreq: "weekly" },
-      { loc: `${SITE_URL}/auth`, priority: "0.3", changefreq: "yearly" },
-    ];
-
-    const dynamicUrls = (data ?? []).map((row) => ({
-      loc: `${SITE_URL}/s/${row.id}`,
-      lastmod: new Date(row.created_at).toISOString(),
-      priority: "0.6",
-      changefreq: "monthly",
-    }));
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[...staticUrls, ...dynamicUrls]
-  .map(
-    (u: any) => `  <url>
-    <loc>${u.loc}</loc>${u.lastmod ? `\n    <lastmod>${u.lastmod}</lastmod>` : ""}
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
-  </url>`,
-  )
-  .join("\n")}
-</urlset>`;
+    const url = Deno.env.get("SUPABASE_URL");
+    const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!url || !key) throw new Error("Sitemap configuration unavailable");
+    const supabase = createClient(url, key);
+    const rows = await loadAllSharedAnalyses(async (from, to) => {
+      const { data, error } = await supabase
+        .from("shared_analyses")
+        .select("id, created_at")
+        .order("id", { ascending: true })
+        .range(from, to);
+      if (error) throw error;
+      return data ?? [];
+    });
+    const xml = buildSitemap(rows);
 
     return new Response(xml, {
       headers: {
